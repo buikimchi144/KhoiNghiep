@@ -1490,7 +1490,6 @@ if (document.querySelector('.review-form') || document.getElementById('qrcode'))
                 updateRatingStatistics();
                 
                 // Show success message
-                reviewForm.style.display = 'none';
                 reviewSuccess.style.display = 'block';
                 
                 // Add to reviews display
@@ -1505,7 +1504,6 @@ if (document.querySelector('.review-form') || document.getElementById('qrcode'))
                         s.style.color = '#ddd';
                     });
                     document.getElementById('ratingText').textContent = '';
-                    reviewForm.style.display = 'block';
                     reviewSuccess.style.display = 'none';
                 }, 3000);
             });

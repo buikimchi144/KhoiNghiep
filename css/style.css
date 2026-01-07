@@ -1393,11 +1393,11 @@ body {
 }
 
 .section-content p {
-    font-size: 1.15rem;
+    font-size: 1.5rem;
     color: #4A5568;
     line-height: 1.8;
     margin-bottom: 1.5rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .content-box {
@@ -1447,13 +1447,14 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    font-size: 1.05rem;
+    font-size: 1.4rem;
     color: #4A5568;
     line-height: 1.6;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     border-left: 3px solid #FF6B6B;
+    font-weight: 600;
 }
 
 .problem-list i {
@@ -1636,11 +1637,11 @@ body {
 }
 
 .values-text p {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     color: #4A5568;
     line-height: 1.8;
     margin-bottom: 1.5rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* Values List */
@@ -1654,14 +1655,14 @@ body {
 }
 
 .values-list li {
-    font-size: 1.05rem;
+    font-size: 1.4rem;
     color: #4A5568;
     line-height: 1.6;
     padding: 1rem 1.5rem;
     background: linear-gradient(135deg, rgba(42, 107, 255, 0.05), rgba(0, 201, 167, 0.05));
     border-radius: 8px;
     border-left: 3px solid #2A6BFF;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
@@ -1674,13 +1675,13 @@ body {
 /* Vision Text */
 .vision-text {
     font-family: 'Times New Roman', Times, serif;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     color: #1A1A2E;
     text-align: center;
     line-height: 2;
     max-width: 900px;
     margin: 0 auto 3rem;
-    font-weight: 600;
+    font-weight: 700;
     position: relative;
     z-index: 1;
 }
@@ -2514,6 +2515,9 @@ body {
 .booking-section-wrapper {
     margin: 4rem auto;
     position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .booking-header {
@@ -2585,6 +2589,16 @@ body {
     overflow: hidden;
     border: 2px solid rgba(42, 107, 255, 0.1);
     margin-top: 2rem;
+    max-width: 900px;
+    width: 100%;
+    animation: fadeInUp 1s ease-out, borderGlow 3s ease-in-out infinite alternate;
+    transition: all 0.3s ease;
+}
+
+.booking-form-ui:hover {
+    box-shadow: 0 30px 80px rgba(42, 107, 255, 0.3);
+    transform: translateY(-5px);
+    border-color: rgba(42, 107, 255, 0.2);
 }
 
 .booking-form-ui::before {
@@ -9326,6 +9340,226 @@ body {
 
 .cart-item-actions button:hover {
     background: #f8f9fa;
+}
+
+@keyframes borderGlow {
+    0% {
+        border-color: rgba(42, 107, 255, 0.1);
+        box-shadow: 0 20px 60px rgba(42, 107, 255, 0.2);
+    }
+    100% {
+        border-color: rgba(42, 107, 255, 0.3);
+        box-shadow: 0 20px 60px rgba(42, 107, 255, 0.4);
+    }
+}
+
+/* Services Page Styles */
+.orientation-section {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+}
+
+.orientation-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.orientation-text {
+    flex: 1;
+    animation: slideInLeft 1s ease-out;
+}
+
+.orientation-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2a6bff;
+}
+
+.orientation-text p {
+    font-size: 1.7rem;
+    line-height: 1.8;
+    color: #666;
+    font-weight: 600;
+}
+
+.orientation-image {
+    flex: 1;
+    animation: slideInRight 1s ease-out;
+}
+
+.orientation-image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.orientation-image img:hover {
+    transform: scale(1.05);
+}
+
+.zoning-section {
+    padding: 6rem 0;
+    background: #f8f9fa;
+}
+
+.zoning-section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s ease-out;
+}
+
+.section-intro {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #666;
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    line-height: 1.6;
+    animation: fadeInUp 1s ease-out 0.2s both;
+    font-weight: 600;
+}
+
+.zoning-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.zoning-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(42, 107, 255, 0.1);
+}
+
+.zoning-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(42, 107, 255, 0.2);
+}
+
+.zoning-icon {
+    font-size: 3rem;
+    color: #2a6bff;
+    margin-bottom: 1rem;
+}
+
+.zoning-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.zoning-card p {
+    color: #666;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.tech-services-section {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+}
+
+.tech-services-section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInUp 1s ease-out;
+}
+
+.tech-features {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.tech-feature {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(42, 107, 255, 0.1);
+}
+
+.tech-feature:hover {
+    transform: translateX(10px);
+    box-shadow: 0 15px 35px rgba(42, 107, 255, 0.15);
+}
+
+.tech-feature:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.tech-feature:nth-child(even):hover {
+    transform: translateX(-10px);
+}
+
+.tech-icon {
+    font-size: 3rem;
+    color: #2a6bff;
+    min-width: 80px;
+    text-align: center;
+}
+
+.tech-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.tech-content p {
+    color: #666;
+    line-height: 1.6;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.alt-bg {
+    background: #f8f9fa;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .orientation-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .tech-feature {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .tech-feature:nth-child(even) {
+        flex-direction: column;
+    }
+    
+    .zoning-features {
+        grid-template-columns: 1fr;
+    }
+}
+
+.booking-tab-btn {
+    transition: all 0.3s ease;
+}
+
+.booking-tab-btn:hover {
+    transform: scale(1.05);
+    color: #2a6bff !important;
 }
 
 .cart-item-remove {
