@@ -3,12 +3,11 @@
     // Danh sách trang không cần đăng nhập
     const publicPages = [
         'login.html',
-        'forgot-password.html',
-        'register.html',
         'reviews.html',
         'index.html',
         'about.html',
         'services.html',
+        'menu.html',
         '' // trang chủ
     ];
     
