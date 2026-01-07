@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Không Gian & Dịch Vụ | Café Focus</title>
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../services.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="../images/logo1.jpg">
+</head>
+<body>
+    <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <a href="../index.html" class="logo">
+                    <img src="../images//logo1.jpg" alt="Café Focus Logo" height="40">
+                    <span>Café Focus</span>
+                </a>
+                
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="../index.html" >TRANG CHỦ</a></li>
+                    <li><a href="about.html" >VỀ CHÚNG TÔI</a></li>
+                    <li><a href="services.html" class="active">KHÔNG GIAN & DỊCH VỤ</a></li>
+                    <li><a href="menu.html">MENU</a></li>  
+                    <li><a href="contact.html">ĐẶT BÀN</a></li>  
+                    <li><a href="reviews.html">ĐÁNH GIÁ <i class="fas fa-star"></i></a></li> 
+                </ul>
+                
+                <!-- User Menu - ĐÃ DI CHUYỂN VÀO TRONG CONTAINER -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-btn" id="userBtn">
+                        <span id="userName">Tài khoản</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">ND</div>
+                            <div>
+                                <strong id="dropdownUserName">Người dùng</strong>
+                                <small id="userEmail">user@example.com</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    <!-- Hero Section -->
+    <section class="services-hero page-hero">
+        <div class="container">
+            <h1 class="services-title hero-title">Không gian & Dịch vụ <span class="highlight">chuyên biệt</span></h1>
+            <p class="services-subtitle hero-subtitle">Trải nghiệm không gian học tập và làm việc được thiết kế tối ưu cho hiệu suất cao nhất.</p>
+        </div>
+    </section>
+
+    <!-- Services Content -->
+    <section class="section space-features">
+        <div class="container">
+            <h2 class="section-title">Các phân khu không gian</h2>
+            <div class="grid-3">
+                <div class="space-card card">
+                    <div class="space-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>Khu vực cá nhân</h3>
+                    <p>Bàn riêng có vách ngăn, đèn học, ổ cắm điện, không gian yên tĩnh tuyệt đối.</p>
+                    <ul class="space-features-list">
+                        <li>Vách ngăn cao 1.2m</li>
+                        <li>Đèn LED điều chỉnh độ sáng</li>
+                        <li>2 ổ cắm/USB mỗi bàn</li>
+                        <li>Khóa tủ đồ cá nhân</li>
+                    </ul>
+                </div>
+                
+                <div class="space-card card">
+                    <div class="space-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Khu vực nhóm</h3>
+                    <p>Bàn lớn 4-6 người, màn hình TV trình chiếu, phù hợp thảo luận nhóm.</p>
+                    <ul class="space-features-list">
+                        <li>Bàn tròn 4-6 chỗ</li>
+                        <li>TV 55 inch kết nối laptop</li>
+                        <li>Bảng trắng và bút viết</li>
+                        <li>Micro không dây</li>
+                    </ul>
+                </div>
+                
+                <div class="space-card card">
+                    <div class="space-icon">
+                        <i class="fas fa-couch"></i>
+                    </div>
+                    <h3>Khu thư giãn</h3>
+                    <p>Sofa êm ái, bàn thấp, không gian mở để nghỉ ngơi, thư giãn giữa giờ.</p>
+                    <ul class="space-features-list">
+                        <li>Sofa da cao cấp</li>
+                        <li>Tạp chí, sách tham khảo</li>
+                        <li>Trà, cà phê miễn phí</li>
+                        <li>Nhạc nhẹ background</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dịch vụ bổ sung -->
+    <section class="section additional-services">
+        <div class="container">
+            <h2 class="section-title">Dịch vụ bổ sung</h2>
+            <div class="grid-3">
+                <div class="service-card card">
+                    <h3><i class="fas fa-print"></i> In ấn</h3>
+                    <div class="service-price">1,000đ/4trang</div>
+                    <p>In đen trắng, màu, scan tài liệu</p>
+                </div>
+                <div class="service-card card">
+                    <h3><i class="fas fa-laptop"></i> Cho thuê thiết bị</h3>
+                    <div class="service-price">20,000đ/giờ</div>
+                    <p>Laptop, tai nghe, sạc dự phòng</p>
+                </div>
+                <div class="service-card card">
+                    <h3><i class="fas fa-archive"></i> Gửi đồ</h3>
+                    <div class="service-price">Miễn phí</div>
+                    <p>Tủ đồ an toàn có khóa</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="section gallery-section">
+        <div class="container">
+            <h2 class="section-title">Không gian thực tế</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="../images/space1.jpg" alt="Khu vực cá nhân" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Khu vực cá nhân</h4>
+                        <p>Không gian học tập riêng tư</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../images/space2.jpg" alt="Khu vực nhóm" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Khu vực nhóm</h4>
+                        <p>Thảo luận và làm việc nhóm</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../images/coffee3.jpg" alt="Khu thư giãn" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Khu thư giãn</h4>
+                        <p>Nghỉ ngơi giữa giờ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nội quy -->
+    <section class="section rules-section">
+        <div class="container">
+            <h2 class="section-title">Nội quy chung</h2>
+            <div class="rules-grid grid-3">
+                <div class="rule-card card">
+                    <div class="rule-icon">
+                        <i class="fas fa-volume-mute"></i>
+                    </div>
+                    <div class="rule-content">
+                        <h4>Giữ yên tĩnh</h4>
+                        <p>Giữ im lặng trong khu vực học tập cá nhân</p>
+                    </div>
+                </div>
+                <div class="rule-card card">
+                    <div class="rule-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="rule-content">
+                        <h4>Giờ sử dụng</h4>
+                        <p>Mỗi ly đồ uống có 3 giờ sử dụng không gian</p>
+                    </div>
+                </div>
+                <div class="rule-card card">
+                    <div class="rule-icon">
+                        <i class="fas fa-wifi"></i>
+                    </div>
+                    <div class="rule-content">
+                        <h4>Wifi miễn phí</h4>
+                        <p>Sử dụng wifi không giới hạn tốc độ cao</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Đã sẵn sàng trải nghiệm?</h2>
+            <p>Đặt bàn ngay để giữ chỗ trong không gian ưa thích của bạn!</p>
+            <a href="contact.html" class="btn btn-primary btn-large">ĐẶT BÀN NGAY</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Café Focus</h3>
+                    <p>Mô hình Café Focus kết hợp công nghệ, mang đến không gian làm việc & học tập hiệu quả nhất</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a href="../index.html">TRANG CHỦ</a></li>
+                        <li><a href="about.html">VỀ CHÚNG TÔI</a></li>
+                        <li><a href="services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                        <li><a href="menu.html">MENU</a></li>
+                        <li><a href="contact.html">ĐẶT BÀN</a></li>
+                        <li><a href="reviews.html">ĐÁNH GIÁ⭐</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên hệ</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123A, Đường Nguyễn Văn Cừ Nối Dài, Phường Ninh Kiều, Cần Thơ</p>
+                    <p><i class="fas fa-phone"></i> 0909 123 456</p>
+                    <p><i class="fas fa-envelope"></i> info@cafefocus.com</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Giờ mở cửa</h3>
+                    <p>Thứ 2 - Thứ 7: 7:00 - 00:00</p>
+                    <p>Chủ nhật: 7:00 - 22:00</p>
+                    <p>Mở cửa cả ngày lễ</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Café Focus. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

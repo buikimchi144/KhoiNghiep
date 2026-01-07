@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "user@example.com",
+      "password": "password123",
+      "name": "Kim Chi",
+      "avatar": "ND",
+      "role": "user",
+      "phone": "0123456789",
+      "address": "123 Đường ABC, Quận 1, TP.HCM",
+      "points": 150,
+      "bookings": 5,
+      "reviews": 3,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "lastLogin": null
+    },
+    {
+      "id": 2,
+      "email": "admin@cafefocus.com",
+      "password": "admin123",
+      "name": "Quản trị viên",
+      "avatar": "QT",
+      "role": "admin",
+      "phone": "0987654321",
+      "address": "456 Đường XYZ, Quận 3, TP.HCM",
+      "points": 1000,
+      "bookings": 25,
+      "reviews": 15,
+      "createdAt": "2023-12-01T00:00:00.000Z",
+      "lastLogin": null
+    },
+    {
+      "id": 4,
+      "email": "customer1@gmail.com",
+      "password": "customer123",
+      "name": "Khách hàng VIP",
+      "avatar": "KH",
+      "role": "user",
+      "phone": "0912345678",
+      "address": "101 Đường GHI, Quận 10, TP.HCM",
+      "points": 800,
+      "bookings": 15,
+      "reviews": 10,
+      "createdAt": "2024-03-01T00:00:00.000Z",
+      "lastLogin": null
+    }
+  ],
+  "settings": {
+    "sessionTimeout": 24,
+    "maxLoginAttempts": 5,
+    "passwordMinLength": 6,
+    "allowRegistration": true,
+    "defaultUserRole": "user"
+  },
+  "loginAttempts": {},
+  "sessions": {}
+}

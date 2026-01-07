@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Trang Chủ | Café Focus</title>
+    <link rel="stylesheet" href="assets/fonts/fonts.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="images/logo1.jpg">
+</head>
+<body>
+    <!-- Check Login -->
+
+    <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <a href="index.html" class="logo">
+                    <img src="images/logo1.jpg" alt="Café Focus Logo" height="40">
+                    <span>Café Focus</span>
+                </a>
+                
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html" class="active">TRANG CHỦ</a></li>
+                    <li><a href="pages/about.html">VỀ CHÚNG TÔI</a></li>
+                    <li><a href="pages/services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                    <li><a href="pages/menu.html">MENU</a></li>  
+                    <li><a href="pages/contact.html">ĐẶT BÀN</a></li>  
+                    <li><a href="pages/reviews.html">ĐÁNH GIÁ <i class="fas fa-star"></i></a></li> 
+                </ul>
+                
+                <!-- User Menu - ĐÃ DI CHUYỂN VÀO TRONG CONTAINER -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-btn" id="userBtn">
+                        <span id="userName">Tài khoản</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">ND</div>
+                            <div>
+                                <strong id="dropdownUserName">Người dùng</strong>
+                                <small id="userEmail">user@example.com</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+    <!-- Ảnh bìa chuyển động dưới menu -->
+    <div class="nav-banner">
+        <div class="banner-slider">
+            <!-- Thêm 8 ảnh bìa chuyển động -->
+            <div class="banner-item">
+                <img src="images/coffee1.png" alt="Coffee Focus" loading="lazy">
+            </div>
+            
+            <div class="banner-item">
+                <img src="images/Ban-lam-viec-rieng.jpg" alt="Study Area" loading="lazy">
+            </div>
+            <div class="banner-item">
+                <img src="images/coffee4.jpg" alt="Private Space" loading="lazy">
+                
+            </div>
+            <div class="banner-item">
+                <img src="images/hoc-bai-nhom.webp" alt="Group Area" loading="lazy">
+                
+            </div>
+            <!-- Lặp lại để tạo hiệu ứng liên tục -->
+            <div class="banner-item">
+                <img src="images/coffee1.png" alt="Coffee Focus" loading="lazy">
+                
+            </div>
+            <div class="banner-item">
+                <img src="images/coffee2.jpg" alt="Workspace" loading="lazy">
+                
+            </div>
+            <div class="banner-item">
+                <img src="images/coffee3.jpg" alt="Study Area" loading="lazy">
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Café - <span class="highlight">Focus</span></h1>
+                <p class="hero-subtitle">Café Focus tin rằng, sự tập trung và cảm hứng chính là hương vị quý giá nhất trong mỗi ngày học tập và làm việc. Từ những ly cà phê đậm đà giúp tỉnh táo, những tách trà nhẹ nhàng để cân bằng cảm xúc, đến không gian yên tĩnh, hiện đại dành riêng cho học sinh, sinh viên và người đi làm, chúng tôi mong mỗi khách ghé Focus đều mang theo một mục tiêu nhỏ – để rồi khi rời đi, không chỉ hoàn thành công việc mà còn giữ lại sự tập trung, năng lượng tích cực và cảm hứng lan tỏa cho cả ngày dài.</p>
+                <div class="hero-buttons">
+                    <a href="pages/contact.html" class="btn btn-primary">ĐẶT BÀN</a>
+                    <a href="pages/about.html" class="btn btn-secondary">KHÁM PHÁ</a>
+                </div>
+            </div>
+            
+            <!-- Hero Illustration -->
+            <div class="hero-illustration">
+                <div class="floating-elements">
+                    <div class="element element-1">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <div class="element element-2">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="element element-3">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <div class="element element-4">
+                        <i class="fas fa-headphones"></i>
+                    </div>
+                </div>
+                <div class="circle-bg"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem & Solution -->
+    <section class="section problem-solution" id="features">
+        <div class="container">
+            <h2 class="section-title">Vấn đề & Giải pháp</h2>
+            <div class="grid-2">
+                <div class="problem-card">
+                    <div class="icon-box">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <h3>Vấn đề khách hàng</h3>
+                    <ul>
+                        <li><i class="fas fa-times-circle"></i> Môi trường ồn ào, mất tập trung</li>
+                        <li><i class="fas fa-times-circle"></i> Lãng phí diện tích, "chiếm chỗ" lâu</li>
+                        <li><i class="fas fa-times-circle"></i> Thiếu kênh phản hồi trực tiếp</li>
+                        <li><i class="fas fa-times-circle"></i> Không gian không phân khu rõ ràng</li>
+                    </ul>
+                </div>
+                <div class="solution-card">
+                    <div class="icon-box">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Giải pháp của chúng tôi</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Phân khu thông minh (Đơn/Nhóm)</li>
+                        <li><i class="fas fa-check-circle"></i> Chính sách 3 giờ/ly tối ưu</li>
+                        <li><i class="fas fa-check-circle"></i> QR Code liên hệ quản lý tức thì</li>
+                        <li><i class="fas fa-check-circle"></i> Hệ thống tích điểm 5+1 hấp dẫn</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section features">
+        <div class="container">
+            <h2 class="section-title">Điểm nổi bật</h2>
+            <div class="grid-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-slash"></i>
+                    </div>
+                    <h3>Không gian riêng tư</h3>
+                    <p>Vách ngăn cá nhân, đèn học riêng, ổ cắm đầy đủ cho từng bàn đơn.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3>Công nghệ QR thông minh</h3>
+                    <p>Gọi quản lý, đánh giá nhân viên, tích điểm điện tử ngay tại bàn.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Chính sách 3 giờ hợp lý</h3>
+                    <p>Tối ưu vòng quay bàn, công bằng cho mọi khách hàng.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Target Audience -->
+    <section class="section audience">
+        <div class="container">
+            <h2 class="section-title">Khách hàng mục tiêu</h2>
+            <div class="grid-2">
+                <div class="audience-card student">
+                    <div class="audience-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Học sinh, Sinh viên</h3>
+                    <p>Ôn thi, làm bài tập, chạy deadline đồ án cần không gian yên tĩnh.</p>
+                    <div class="stats">
+                        <span><strong>16-22 tuổi</strong></span>
+                        <span><strong>Nhu cầu cao</strong></span>
+                    </div>
+                </div>
+                <div class="audience-card freelancer">
+                    <div class="audience-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3>Freelancer & Người đi làm</h3>
+                    <p>Làm việc từ xa, cần wifi mạnh, ổ điện và môi trường chuyên nghiệp.</p>
+                    <div class="stats">
+                        <span><strong>22-35 tuổi</strong></span>
+                        <span><strong>Sẵn sàng chi trả</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Model Summary -->
+    <section class="section business-model">
+        <div class="container">
+            <h2 class="section-title">Mô hình doanh thu</h2>
+            <div class="model-grid">
+                <div class="model-card">
+                    <h3>Pay per use</h3>
+                    <p class="price">1 ly = 3 giờ</p>
+                    <p>Doanh thu chính từ đồ uống kèm không gian</p>
+                </div>
+                <div class="model-card">
+                    <h3>Subscription</h3>
+                    <p class="price">Gói thành viên</p>
+                    <p>Đặt bàn ưu tiên, tích điểm nhanh, ưu đãi đặc biệt</p>
+                </div>
+                <div class="model-card">
+                    <h3>Value-added</h3>
+                    <p class="price">Dịch vụ gia tăng</p>
+                    <p>In ấn, cho thuê thiết bị, tổ chức workshop</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Café Focus</h3>
+                    <p>Mô hình Café Focus kết hợp công nghệ, mang đến không gian làm việc & học tập hiệu quả nhất</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a href="index.html" class="active">TRANG CHỦ</a></li>
+                        <li><a href="pages/about.html">VỀ CHÚNG TÔI</a></li>
+                        <li><a href="pages/services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                        <li><a href="pages/menu.html">MENU</a></li>
+                        <li><a href="pages/contact.html">ĐẶT BÀN</a></li>
+                        <li><a href="pages/reviews.html">ĐÁNH GIÁ⭐</i></a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên hệ</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123A, Đường Nguyễn Văn Cừ Nối Dài, Phường Ninh Kiều, Cần Thơ</p>
+                    <p><i class="fas fa-phone"></i> 0909 123 456</p>
+                    <p><i class="fas fa-envelope"></i> info@cafefocus.com</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Giờ mở cửa</h3>
+                    <p>Thứ 2 - Thứ 7: 7:00 - 00:00</p>
+                    <p>Chủ nhật: 7:00 - 22:00</p>
+                    <p>Mở cửa cả ngày lễ</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Café Focus. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+
+    <!-- Authentication Check -->
+</body>
+</html>

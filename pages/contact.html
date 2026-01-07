@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt bàn | Café Focus</title>
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="../images/logo1.jpg">
+</head>
+<body>
+    <!-- Navigation -->
+       <nav class="navbar">
+            <div class="container">
+                <a href="../index.html" class="logo">
+                    <img src="../images//logo1.jpg" alt="Café Focus Logo" height="40">
+                    <span>Café Focus</span>
+                </a>
+                
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="../index.html" >TRANG CHỦ</a></li>
+                    <li><a href="about.html" >VỀ CHÚNG TÔI</a></li>
+                    <li><a href="services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                    <li><a href="menu.html">MENU</a></li>  
+                    <li><a href="contact.html" class="active">ĐẶT BÀN</a></li>  
+                    <li><a href="reviews.html">ĐÁNH GIÁ <i class="fas fa-star"></i></a></li> 
+                </ul>
+                
+                <!-- User Menu - ĐÃ DI CHUYỂN VÀO TRONG CONTAINER -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-btn" id="userBtn">
+                        <span id="userName">Tài khoản</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">ND</div>
+                            <div>
+                                <strong id="dropdownUserName">Người dùng</strong>
+                                <small id="userEmail">user@example.com</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+    <!-- Hero Section -->
+    <section class="contact-hero">
+        <div class="contact-container">
+            <h1 class="contact-title">ĐẶT BÀN</h1>
+            <p class="contact-subtitle">
+                Kết nối với chúng tôi để trải nghiệm không gian làm việc và học tập tối ưu
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="contact-container">
+            <!-- Booking Form Section -->
+            <div class="booking-section-wrapper">
+                
+                
+                <!-- Booking form mới theo bố cục ảnh -->
+                <div class="booking-form-ui">
+                    <!-- Tab Navigation -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #f0f0f0;">
+                        <button class="booking-tab-btn active" onclick="switchTab('booking-form')" style="padding: 12px 24px; background: none; border: none; font-size: 1rem; font-weight: 600; color: #2a6bff; border-bottom: 3px solid #2a6bff; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fas fa-clipboard-list"></i> ĐẶT BÀN MỚI
+                        </button>
+                        <button class="booking-tab-btn" onclick="switchTab('booking-history')" style="padding: 12px 24px; background: none; border: none; font-size: 1rem; font-weight: 600; color: #999; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fas fa-history"></i> LỊCH SỬ ĐẶT BÀN <span id="history-count" style="background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 12px; margin-left: 5px; font-size: 0.9rem;">0</span>
+                        </button>
+                    </div>
+                    
+                    <div class="booking-header">
+                    <h2>ĐẶT BÀN TRỰC TUYẾN</h2>
+                    <p>Vui lòng điền đầy đủ thông tin vào form bên dưới</p>
+                </div>
+                    
+                    <form id="bookingForm">
+                        <!-- Thời gian đặt bàn -->
+                        <div class="form-section">
+                            <h3 class="form-section-title"><i class="far fa-calendar-alt"></i> THỜI GIAN ĐẶT BÀN</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="booking-date">Ngày đặt <span class="required">*</span></label>
+                                    <input type="text" id="booking-date-display" placeholder="DD/MM/YYYY" required readonly style="cursor: pointer;">
+                                    <input type="date" id="booking-date" name="booking-date" required style="display: none;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="booking-time">Giờ đặt <span class="required">*</span></label>
+                                    <input type="time" id="booking-time" name="booking-time" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="duration">Thời lượng <span class="required">*</span></label>
+                                    <select id="duration" name="duration" required>
+                                        <option value="">Chọn thời lượng</option>
+                                        <option value="1">1 giờ</option>
+                                        <option value="2">2 giờ</option>
+                                        <option value="3">3 giờ</option>
+                                        <option value="4">4 giờ</option>
+                                        <option value="5">5 giờ</option>
+                                        <option value="6">6 giờ trở lên</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="number-of-people">Số người <span class="required">*</span></label>
+                                    <select id="number-of-people" name="number-of-people" required>
+                                        <option value="">Chọn số người</option>
+                                        <option value="1">1 người</option>
+                                        <option value="2">2 người</option>
+                                        <option value="3">3 người</option>
+                                        <option value="4">4 người</option>
+                                        <option value="5">5-6 người</option>
+                                        <option value="7">7-8 người</option>
+                                        <option value="9">Trên 8 người</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chọn khu vực / loại bàn -->
+                        <div class="form-section">
+                            <h3 class="form-section-title"><i class="fas fa-chair"></i> CHỌN KHU VỰC / LOẠI BÀN</h3>
+                            <div class="table-type-grid">
+                                <div class="table-type-option" data-type="window">
+                                    <i class="fas fa-window-maximize"></i>
+                                    <span>Bàn cửa sổ</span>
+                                    <small>View đẹp, yên tĩnh</small>
+                                </div>
+                                
+                                <div class="table-type-option" data-type="quiet">
+                                    <i class="fas fa-volume-mute"></i>
+                                    <span>Khu yên tĩnh</span>
+                                    <small>Làm việc tập trung</small>
+                                </div>
+                                
+                                <div class="table-type-option" data-type="group">
+                                    <i class="fas fa-users"></i>
+                                    <span>Bàn nhóm</span>
+                                    <small>4-6 người</small>
+                                </div>
+                                
+                                <div class="table-type-option" data-type="single">
+                                    <i class="fas fa-user"></i>
+                                    <span>Bàn đơn</span>
+                                    <small>1-2 người</small>
+                                </div>
+                                
+                                <div class="table-type-option" data-type="vip">
+                                    <i class="fas fa-crown"></i>
+                                    <span>Phòng VIP</span>
+                                    <small>Riêng tư, đầy đủ tiện nghi</small>
+                                </div>
+                                
+                                <div class="table-type-option" data-type="outdoor">
+                                    <i class="fas fa-leaf"></i>
+                                    <span>Khu ngoài trời</span>
+                                    <small>Thoáng mát</small>
+                                </div>
+                            </div>
+                            <input type="hidden" id="table-type" name="table-type" required>
+                        </div>
+                        
+                        <!-- Thông tin người đặt -->
+                        <div class="form-section">
+                            <h3 class="form-section-title"><i class="fas fa-user-circle"></i> THÔNG TIN NGƯỜI ĐẶT</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="customer-name">Họ và tên <span class="required">*</span></label>
+                                    <input type="text" id="customer-name" name="customer-name" required placeholder="Nhập họ và tên">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customer-phone">Số điện thoại <span class="required">*</span></label>
+                                    <input type="tel" id="customer-phone" name="customer-phone" required placeholder="Nhập số điện thoại">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="customer-email">Email <span class="required">*</span></label>
+                                    <input type="email" id="customer-email" name="customer-email" required placeholder="Nhập địa chỉ email">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="special-requests">Yêu cầu đặc biệt</label>
+                                    <input type="text" id="special-requests" name="special-requests" placeholder="Ví dụ: sinh nhật, kỷ niệm...">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ghi chú -->
+                        <div class="form-section">
+                            <h3 class="form-section-title"><i class="fas fa-sticky-note"></i> GHI CHÚ THÊM</h3>
+                            <div class="form-group">
+                                <label for="additional-notes">Ghi chú cho quán</label>
+                                <textarea id="additional-notes" name="additional-notes" rows="3" placeholder="Vui lòng ghi chú thêm nếu có yêu cầu đặc biệt..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Chính sách - Lưu ý -->
+                        <div class="notes-box">
+                            <h4><i class="fas fa-info-circle"></i> CHÍNH SÁCH & LƯU Ý</h4>
+                            <ul>
+                                <li>Vui lòng đến đúng giờ đã đặt. Bàn sẽ được giữ trong 15 phút</li>
+                                <li>Hủy đặt bàn trước ít nhất 2 giờ để không bị tính phí</li>
+                                <li>Đặt cọc 50k khi đặt bàn nhóm từ 4 người trở lên</li>
+                                <li>Không mang thức ăn nước uống bên ngoài vào quán</li>
+                                <li>Giữ trật tự chung để không làm ảnh hưởng đến khách khác</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Nút đặt bàn -->
+                        <button type="submit" class="btn-booking">
+                            <i class="fas fa-check-circle"></i> ĐẶT BÀN NGAY
+                        </button>
+                    </form>
+                    
+                    <!-- Thông báo thành công -->
+                    <div id="bookingSuccess" style="display: none; text-align: center; padding: 30px;">
+                        <i class="fas fa-check-circle" style="font-size: 50px; color: #2ecc71; margin-bottom: 20px;"></i>
+                        <h3 style="color: #2c3e50; margin-bottom: 15px;">ĐẶT BÀN THÀNH CÔNG!</h3>
+                        <p style="color: #555; margin-bottom: 25px;">Cảm ơn bạn đã đặt bàn tại Café Focus. Chúng tôi sẽ xác nhận qua điện thoại trong vòng 30 phút.</p>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="resetBookingForm()" class="btn-booking" style="max-width: 300px;">
+                                <i class="fas fa-redo"></i> ĐẶT BÀN MỚI
+                            </button>
+                            <button onclick="switchTab('booking-history')" class="btn-booking" style="max-width: 300px; background: #00c9a7;">
+                                <i class="fas fa-history"></i> XEM LỊCH SỬ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Lịch sử đặt bàn -->
+                    <div id="booking-history-tab" style="display: none;">
+                        <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;"><i class="fas fa-history"></i> LỊCH SỬ ĐẶT BÀN</h3>
+                        <div id="booking-history-list" style="display: grid; gap: 15px;">
+                            <p style="text-align: center; color: #999; padding: 30px;">Chưa có lịch sử đặt bàn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+<!-- Phần liên hệ và thông tin -->
+<div class="contact-grid">
+    <!-- Contact Information -->
+    <div class="contact-info-card" style="padding: 3rem; border-radius: 24px; box-shadow: 0 10px 40px rgba(42, 107, 255, 0.15); background: linear-gradient(135deg, #ffffff, #f8faff); border: 2px solid rgba(42, 107, 255, 0.1); position: relative; overflow: hidden;">
+        
+        <!-- Background decorative elements -->
+        <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(42, 107, 255, 0.08) 0%, transparent 70%); border-radius: 50%; z-index: 1;"></div>
+        <div style="position: absolute; bottom: -80px; left: -80px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0, 201, 167, 0.08) 0%, transparent 70%); border-radius: 50%; z-index: 1;"></div>
+        
+        <div style="position: relative; z-index: 2;">
+            <h2 class="info-title" style="text-align: center; margin-bottom: 3rem; font-size: 2.8rem; font-weight: 800; color: #2c3e50; position: relative; padding-bottom: 1.2rem;">
+                THÔNG TIN LIÊN HỆ
+                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 5px; background: linear-gradient(90deg, #2a6bff, #00c9a7); border-radius: 3px;"></div>
+            </h2>
+            
+            <!-- Hàng 1: Địa chỉ và Điện thoại -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem; margin-bottom: 2.5rem;">
+                
+                <!-- Địa chỉ -->
+                <div class="contact-info-item" style="padding: 2.2rem; border-radius: 16px; display: flex; align-items: flex-start; gap: 1.5rem; background: white; box-shadow: 0 6px 20px rgba(42, 107, 255, 0.08); border: 2px solid rgba(42, 107, 255, 0.05); transition: all 0.3s ease; min-height: 180px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #2a6bff, #00c9a7);"></div>
+                    <div class="info-icon" style="width: 65px; height: 65px; min-width: 65px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: linear-gradient(135deg, #2a6bff, #00c9a7); border-radius: 14px; box-shadow: 0 6px 15px rgba(42, 107, 255, 0.25);">
+                        <i class="fas fa-map-marker-alt" style="font-size: 1.8rem; color: white;"></i>
+                    </div>
+                    <div class="info-content" style="flex: 1;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 0.8rem; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📍</span> ĐỊA CHỈ
+                        </h3>
+                        <p style="font-size: 1.05rem; line-height: 1.7; color: #555; margin: 0; font-weight: 500;">
+                            123A, Đường Nguyễn Văn Cừ Nối Dài<br>
+                            Phường Ninh Kiều, Cần Thơ
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Điện thoại -->
+                <div class="contact-info-item" style="padding: 2.2rem; border-radius: 16px; display: flex; align-items: flex-start; gap: 1.5rem; background: white; box-shadow: 0 6px 20px rgba(42, 107, 255, 0.08); border: 2px solid rgba(42, 107, 255, 0.05); transition: all 0.3s ease; min-height: 180px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #00c9a7, #2a6bff);"></div>
+                    <div class="info-icon" style="width: 65px; height: 65px; min-width: 65px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: linear-gradient(135deg, #00c9a7, #2a6bff); border-radius: 14px; box-shadow: 0 6px 15px rgba(0, 201, 167, 0.25);">
+                        <i class="fas fa-phone" style="font-size: 1.8rem; color: white;"></i>
+                    </div>
+                    <div class="info-content" style="flex: 1;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 0.8rem; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📞</span> ĐIỆN THOẠI
+                        </h3>
+                        <p style="font-size: 1.05rem; line-height: 1.9; color: #555; margin: 0;">
+                            <strong style="color: #2c3e50; font-weight: 600;">Hotline:</strong> 
+                            <a href="tel:0909123456" class="phone-link" style="color: #2a6bff; text-decoration: none; font-weight: 700; padding: 2px 6px; border-radius: 4px; transition: all 0.2s ease;">0909 123 456</a>
+                            <br>
+                            <strong style="color: #2c3e50; font-weight: 600;">Hỗ trợ:</strong> 
+                            <a href="tel:0900666888" class="phone-link" style="color: #2a6bff; text-decoration: none; font-weight: 700; padding: 2px 6px; border-radius: 4px; transition: all 0.2s ease;">0900 666 888</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hàng 2: Email và Giờ mở cửa -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem;">
+                
+                <!-- Email -->
+                <div class="contact-info-item" style="padding: 2.2rem; border-radius: 16px; display: flex; align-items: flex-start; gap: 1.5rem; background: white; box-shadow: 0 6px 20px rgba(42, 107, 255, 0.08); border: 2px solid rgba(42, 107, 255, 0.05); transition: all 0.3s ease; min-height: 180px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #ff6b6b, #ffa502);"></div>
+                    <div class="info-icon" style="width: 65px; height: 65px; min-width: 65px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: linear-gradient(135deg, #ff6b6b, #ffa502); border-radius: 14px; box-shadow: 0 6px 15px rgba(255, 107, 107, 0.25);">
+                        <i class="fas fa-envelope" style="font-size: 1.8rem; color: white;"></i>
+                    </div>
+                    <div class="info-content" style="flex: 1;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 0.8rem; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>✉️</span> EMAIL
+                        </h3>
+                        <p style="font-size: 1.05rem; line-height: 1.8; color: #555; margin: 0;">
+                            <a href="mailto:cafefocus@gmail.com" style="color: #2c3e50; text-decoration: none; font-weight: 600; padding: 2px 6px; border-radius: 4px; transition: all 0.2s ease;">cafefocus@gmail.com</a>
+                            <br>
+                            <a href="mailto:partnership@cafefocus.com" style="color: #2c3e50; text-decoration: none; font-weight: 600; padding: 2px 6px; border-radius: 4px; transition: all 0.2s ease;">partnership@cafefocus.com</a>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Giờ mở cửa -->
+                <div class="contact-info-item" style="padding: 2.2rem; border-radius: 16px; display: flex; align-items: flex-start; gap: 1.5rem; background: white; box-shadow: 0 6px 20px rgba(42, 107, 255, 0.08); border: 2px solid rgba(42, 107, 255, 0.05); transition: all 0.3s ease; min-height: 180px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #5f27cd, #341f97);"></div>
+                    <div class="info-icon" style="width: 65px; height: 65px; min-width: 65px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: linear-gradient(135deg, #5f27cd, #341f97); border-radius: 14px; box-shadow: 0 6px 15px rgba(95, 39, 205, 0.25);">
+                        <i class="fas fa-clock" style="font-size: 1.8rem; color: white;"></i>
+                    </div>
+                    <div class="info-content" style="flex: 1;">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 0.8rem; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🕐</span> GIỜ MỞ CỬA
+                        </h3>
+                        <div class="business-hours" style="font-size: 1.05rem; line-height: 1.9; color: #555;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                                <span style="font-weight: 600;">Thứ 2 - Thứ 7:</span>
+                                <span style="color: #2a6bff; font-weight: 700;">7:00 - 00:00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+                                <span style="font-weight: 600;">Chủ nhật:</span>
+                                <span style="color: #ff6b6b; font-weight: 700;">7:00 - 22:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kết nối với chúng tôi -->
+            <div class="social-section" style="margin-top: 3.5rem; padding-top: 2.5rem; border-top: 2px solid rgba(42, 107, 255, 0.15); text-align: center;">
+                <h3 style="font-size: 1.5rem; color: #2c3e50; margin-bottom: 1.8rem; font-weight: 700; position: relative; display: inline-block; padding-bottom: 0.8rem;">
+                    KẾT NỐI VỚI CHÚNG TÔI
+                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #2a6bff, #00c9a7, #ff6b6b, #5f27cd); border-radius: 2px;"></div>
+                </h3>
+                <div class="social-icons" style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+                    <a href="#" class="social-icon facebook" style="width: 58px; height: 58px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1877F2, #0A5BC4); color: white; font-size: 1.6rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(24, 119, 242, 0.3); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: 0.5s;"></div>
+                        <i class="fab fa-facebook-f" style="position: relative; z-index: 2;"></i>
+                    </a>
+                    <a href="#" class="social-icon twitter" style="width: 58px; height: 58px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1DA1F2, #0C85D0); color: white; font-size: 1.6rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(29, 161, 242, 0.3); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: 0.5s;"></div>
+                        <i class="fab fa-twitter" style="position: relative; z-index: 2;"></i>
+                    </a>
+                    <a href="#" class="social-icon instagram" style="width: 58px; height: 58px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D); color: white; font-size: 1.6rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(193, 53, 132, 0.3); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: 0.5s;"></div>
+                        <i class="fab fa-instagram" style="position: relative; z-index: 2;"></i>
+                    </a>
+                    <a href="#" class="social-icon tiktok" style="width: 58px; height: 58px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #000000, #25F4EE, #FE2C55); color: white; font-size: 1.6rem; transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(254, 44, 85, 0.3); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: 0.5s;"></div>
+                        <i class="fab fa-tiktok" style="position: relative; z-index: 2;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Thêm style cho hover effects */
+    .contact-info-item {
+        transition: all 0.3s ease !important;
+    }
+    
+    .contact-info-item:hover {
+        transform: translateY(-8px) !important;
+        box-shadow: 0 12px 30px rgba(42, 107, 255, 0.15) !important;
+        border-color: rgba(42, 107, 255, 0.2) !important;
+    }
+    
+    .info-icon {
+        transition: all 0.3s ease !important;
+    }
+    
+    .contact-info-item:hover .info-icon {
+        transform: rotate(15deg) scale(1.1) !important;
+    }
+    
+    .phone-link:hover {
+        background-color: #2a6bff !important;
+        color: white !important;
+        padding: 2px 8px !important;
+    }
+    
+    .social-icon {
+        transition: all 0.3s ease !important;
+    }
+    
+    .social-icon:hover {
+        transform: translateY(-6px) scale(1.1) !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    .social-icon:hover > div {
+        left: 100% !important;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 992px) {
+        .contact-grid {
+            max-width: 90% !important;
+            margin: 2rem auto !important;
+        }
+        
+        .contact-info-card {
+            padding: 2rem !important;
+        }
+        
+        .info-title {
+            font-size: 2.2rem !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .contact-grid {
+            padding: 0 1rem !important;
+        }
+        
+        .contact-info-card {
+            padding: 1.5rem !important;
+        }
+        
+        .contact-info-item {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+            padding: 1.8rem !important;
+        }
+        
+        .info-title {
+            font-size: 1.8rem !important;
+            margin-bottom: 2rem !important;
+        }
+        
+        .contact-info-item h3 {
+            font-size: 1.2rem !important;
+        }
+        
+        .contact-info-item p {
+            font-size: 1rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .contact-grid {
+            max-width: 100% !important;
+            margin: 1.5rem auto !important;
+            padding: 0 1rem !important;
+        }
+        
+        .contact-info-card {
+            padding: 1.2rem !important;
+            border-radius: 16px !important;
+        }
+        
+        .info-title {
+            font-size: 1.6rem !important;
+        }
+        
+        .contact-info-item {
+            padding: 1.2rem !important;
+            min-height: auto !important;
+        }
+        
+        .info-icon {
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px !important;
+        }
+        
+        .info-icon i {
+            font-size: 1.4rem !important;
+        }
+        
+        .social-icon {
+            width: 48px !important;
+            height: 48px !important;
+            font-size: 1.4rem !important;
+        }
+    }
+</style>
+
+<script>
+    // Thêm hiệu ứng hover cho các item
+    document.addEventListener('DOMContentLoaded', function() {
+        const contactItems = document.querySelectorAll('.contact-info-item');
+        const socialIcons = document.querySelectorAll('.social-icon');
+        
+        // Hiệu ứng cho contact items
+        contactItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('.info-icon');
+                icon.style.transform = 'rotate(15deg) scale(1.1)';
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                const icon = this.querySelector('.info-icon');
+                icon.style.transform = 'rotate(0deg) scale(1)';
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Hiệu ứng cho social icons
+        socialIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-6px) scale(1.1)';
+                const shine = this.querySelector('div');
+                shine.style.left = '100%';
+            });
+            
+            icon.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                const shine = this.querySelector('div');
+                shine.style.left = '-100%';
+            });
+        });
+    });
+</script>            
+            <!-- Map Section -->
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.841708394135!2d105.76941497507146!3d10.029933189993744!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0883e1a6c7a3b%3A0x3d1e5dfc9c0e3b0d!2sCan%20Tho%20University!5e0!3m2!1sen!2s!4v1648567890123!5m2!1sen!2s" 
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Café Focus</h3>
+                    <p>Mô hình Café Focus kết hợp công nghệ, mang đến không gian làm việc & học tập hiệu quả nhất</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a href="../index.html">TRANG CHỦ</a></li>
+                        <li><a href="about.html">VỀ CHÚNG TÔI</a></li>
+                        <li><a href="services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                        <li><a href="menu.html">MENU</a></li>
+                        <li><a href="contact.html" class="active">ĐẶT BÀN</a></li>
+                        <li><a href="reviews.html">ĐÁNH GIÁ⭐</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên hệ</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123A, Đường Nguyễn Văn Cừ Nối Dài, Phường Ninh Kiều, Cần Thơ</p>
+                    <p><i class="fas fa-phone"></i> 0909 123 456</p>
+                    <p><i class="fas fa-envelope"></i> info@cafefocus.com</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Giờ mở cửa</h3>
+                    <p>Thứ 2 - Thứ 7: 7:00 - 00:00</p>
+                    <p>Chủ nhật: 7:00 - 22:00</p>
+                    <p>Mở cửa cả ngày lễ</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Café Focus. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+<script>
+    // Biến lưu thông tin người dùng hiện tại
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy thông tin người dùng từ localStorage hoặc session
+        loadCurrentUser();
+        
+        // Set min date for booking (today)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('booking-date').min = today;
+        
+        // Handle table type selection
+        const tableOptions = document.querySelectorAll('.table-type-option');
+        const tableTypeInput = document.getElementById('table-type');
+        
+        tableOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all options
+                tableOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Set the value to hidden input
+                tableTypeInput.value = this.getAttribute('data-type');
+            });
+        });
+        
+        // Booking form submission
+        const bookingForm = document.getElementById('bookingForm');
+        const bookingSuccess = document.getElementById('bookingSuccess');
+        
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Kiểm tra đăng nhập
+                if (!currentUser) {
+                    alert('VUI LÒNG ĐĂNG NHẬP ĐỂ ĐẶT BÀN!');
+                    // Redirect to login or show login modal
+                    return;
+                }
+                
+                // Validate required fields
+                const requiredFields = [
+                    'booking-date',
+                    'booking-time',
+                    'duration',
+                    'number-of-people',
+                    'table-type',
+                    'customer-name',
+                    'customer-phone',
+                    'customer-email'
+                ];
+                
+                let isValid = true;
+                let firstInvalidField = null;
+                
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        if (!firstInvalidField) firstInvalidField = field;
+                        field.style.borderColor = '#e74c3c';
+                    } else {
+                        field.style.borderColor = '#ddd';
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('VUI LÒNG ĐIỀN ĐẦY ĐỦ THÔNG TIN BẮT BUỘC!');
+                    if (firstInvalidField) firstInvalidField.focus();
+                    return;
+                }
+                
+                // Phone validation
+                const phoneRegex = /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+                const phoneValue = document.getElementById('customer-phone').value.replace(/ /g, '');
+                
+                if (!phoneRegex.test(phoneValue)) {
+                    alert('SỐ ĐIỆN THOẠI KHÔNG HỢP LỆ!');
+                    document.getElementById('customer-phone').focus();
+                    document.getElementById('customer-phone').style.borderColor = '#e74c3c';
+                    return;
+                }
+                
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const emailValue = document.getElementById('customer-email').value;
+                
+                if (!emailRegex.test(emailValue)) {
+                    alert('EMAIL KHÔNG HỢP LỆ!');
+                    document.getElementById('customer-email').focus();
+                    document.getElementById('customer-email').style.borderColor = '#e74c3c';
+                    return;
+                }
+                
+                // Show loading
+                const submitBtn = bookingForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+                submitBtn.disabled = true;
+                
+                // Collect form data
+                const formData = {
+                    date: document.getElementById('booking-date').value,
+                    time: document.getElementById('booking-time').value,
+                    duration: document.getElementById('duration').value,
+                    people: document.getElementById('number-of-people').value,
+                    tableType: document.getElementById('table-type').value,
+                    name: document.getElementById('customer-name').value,
+                    phone: document.getElementById('customer-phone').value,
+                    email: document.getElementById('customer-email').value,
+                    specialRequests: document.getElementById('special-requests').value,
+                    notes: document.getElementById('additional-notes').value,
+                    userId: currentUser.id,
+                    userEmail: currentUser.email
+                };
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Save to localStorage
+                    const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+                    const bookingRecord = {
+                        id: Date.now(),
+                        ...formData,
+                        displayDate: document.getElementById('booking-date-display').value,
+                        submittedAt: new Date().toLocaleString('vi-VN'),
+                        status: 'pending', // Mặc định là chờ xác nhận
+                        userRole: currentUser.role // Lưu role của người đặt
+                    };
+                    bookingHistory.unshift(bookingRecord);
+                    localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+                    
+                    // Hide form and show success message
+                    bookingForm.style.display = 'none';
+                    bookingSuccess.style.display = 'block';
+                    
+                    // Update history count
+                    updateHistoryCount();
+                    
+                    // Log booking data
+                    console.log('Booking Data Submitted:', formData);
+                    
+                    // Show notification
+                    if (window.showNotification) {
+                        showNotification('success', '✅ ĐẶT BÀN THÀNH CÔNG! CHÚNG TÔI SẼ LIÊN HỆ XÁC NHẬN.');
+                    }
+                    
+                    // Send confirmation email (simulated)
+                    console.log('Confirmation email would be sent to:', formData.email);
+                }, 1500);
+            });
+        }
+        
+        // Contact Form Handling
+        const contactForm = document.getElementById('contactForm');
+        const contactSuccessMessage = document.getElementById('successMessage');
+        
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = {
+                    name: document.getElementById('fullName').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    subject: document.getElementById('subject').value,
+                    message: document.getElementById('message').value
+                };
+                
+                // Validation
+                if (!formData.name || !formData.phone || !formData.email || !formData.subject || !formData.message) {
+                    alert('VUI LÒNG ĐIỀN ĐẦY ĐỦ THÔNG TIN!');
+                    return;
+                }
+                
+                // Phone validation
+                const phoneRegex = /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+                if (!phoneRegex.test(formData.phone.replace(/ /g, ''))) {
+                    alert('SỐ ĐIỆN THOẠI KHÔNG HỢP LỆ!');
+                    return;
+                }
+                
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.email)) {
+                    alert('EMAIL KHÔNG HỢP LỆ!');
+                    return;
+                }
+                
+                // Show loading
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG GỬI...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Hide form and show success message
+                    contactForm.style.display = 'none';
+                    contactSuccessMessage.style.display = 'block';
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Log form data
+                    console.log('Contact Form Submitted:', formData);
+                    
+                    // Show notification
+                    if (window.showNotification) {
+                        showNotification('success', '✅ GỬI LIÊN HỆ THÀNH CÔNG! CHÚNG TÔI SẼ PHẢN HỒI SỚM.');
+                    }
+                }, 1500);
+            });
+        }
+        
+        // Add active class to current page in nav
+        const currentPage = window.location.pathname.split('/').pop();
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+    });
+    
+    // Hàm lấy thông tin người dùng hiện tại
+    function loadCurrentUser() {
+        // Kiểm tra sessionStorage hoặc localStorage
+        const userData = localStorage.getItem('cafeUser');
+        if (userData) {
+            currentUser = JSON.parse(userData);
+            
+            // Cập nhật UI với thông tin người dùng
+            if (document.getElementById('userName')) {
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('dropdownUserName').textContent = currentUser.name;
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('userAvatar').textContent = currentUser.avatar || currentUser.name.substring(0, 2);
+            }
+        } else {
+            // Nếu không có người dùng, sử dụng mặc định
+            currentUser = {
+                id: null,
+                name: 'Khách',
+                email: '',
+                role: 'guest',
+                avatar: 'KH'
+            };
+        }
+        
+        // Kiểm tra nếu là admin thì thêm badge
+        if (currentUser.role === 'admin' && document.getElementById('userName')) {
+            document.getElementById('userName').innerHTML = `${currentUser.name}`;
+        }
+    }
+    
+    function resetBookingForm() {
+        const bookingForm = document.getElementById('bookingForm');
+        const bookingSuccess = document.getElementById('bookingSuccess');
+        
+        // Reset form
+        bookingForm.reset();
+        
+        // Reset table type selection
+        document.querySelectorAll('.table-type-option').forEach(opt => {
+            opt.classList.remove('active');
+        });
+        document.getElementById('table-type').value = '';
+        
+        // Show form and hide success message
+        bookingForm.style.display = 'block';
+        bookingSuccess.style.display = 'none';
+        
+        // Reset button state
+        const submitBtn = bookingForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> ĐẶT BÀN NGAY';
+        
+        // Re-initialize date
+        initBookingPage();
+        
+        // Set focus to first field
+        document.getElementById('booking-date').focus();
+    }
+    
+    function resetContactForm() {
+        const contactForm = document.getElementById('contactForm');
+        const successMessage = document.getElementById('successMessage');
+        
+        // Reset form
+        contactForm.reset();
+        
+        // Show form and hide success message
+        contactForm.style.display = 'block';
+        successMessage.style.display = 'none';
+    }
+    
+    // Switch tab function
+    function switchTab(tabName) {
+        const bookingForm = document.getElementById('bookingForm');
+        const bookingSuccess = document.getElementById('bookingSuccess');
+        const bookingHistoryTab = document.getElementById('booking-history-tab');
+        const tabButtons = document.querySelectorAll('.booking-tab-btn');
+        
+        // Kiểm tra đăng nhập cho lịch sử đặt bàn
+        if (tabName === 'booking-history' && !currentUser.id) {
+            alert('VUI LÒNG ĐĂNG NHẬP ĐỂ XEM LỊCH SỬ ĐẶT BÀN!');
+            return;
+        }
+        
+        // Hide all tabs
+        bookingForm.style.display = 'none';
+        bookingSuccess.style.display = 'none';
+        bookingHistoryTab.style.display = 'none';
+        
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => {
+            btn.style.color = '#999';
+            btn.style.borderBottomColor = 'transparent';
+        });
+        
+        // Show selected tab and update button
+        if (tabName === 'booking-form') {
+            bookingForm.style.display = 'block';
+            tabButtons[0].style.color = '#2a6bff';
+            tabButtons[0].style.borderBottomColor = '#2a6bff';
+        } else if (tabName === 'booking-history') {
+            bookingHistoryTab.style.display = 'block';
+            tabButtons[1].style.color = '#2a6bff';
+            tabButtons[1].style.borderBottomColor = '#2a6bff';
+            loadBookingHistory();
+        }
+    }
+    
+    // Load and display booking history
+    function loadBookingHistory() {
+        const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        const historyList = document.getElementById('booking-history-list');
+        
+        // Lọc lịch sử dựa trên vai trò
+        let filteredHistory = [];
+        
+        if (currentUser.role === 'admin') {
+            // Admin xem tất cả
+            filteredHistory = bookingHistory;
+        } else {
+            // User chỉ xem của mình
+            filteredHistory = bookingHistory.filter(booking => 
+                booking.userId === currentUser.id
+            );
+        }
+        
+        if (filteredHistory.length === 0) {
+            const noBookingMsg = currentUser.role === 'admin' 
+                ? 'Chưa có đơn đặt bàn nào trong hệ thống'
+                : 'Bạn chưa có đơn đặt bàn nào';
+                
+            historyList.innerHTML = `<p style="text-align: center; color: #999; padding: 30px;">${noBookingMsg}</p>`;
+            return;
+        }
+        
+        let html = '';
+        const tableTypeLabels = {
+            'window': 'Bàn cửa sổ',
+            'quiet': 'Khu yên tĩnh',
+            'group': 'Bàn nhóm',
+            'single': 'Bàn đơn',
+            'vip': 'Phòng VIP',
+            'outdoor': 'Khu ngoài trời'
+        };
+        
+        filteredHistory.forEach((booking, index) => {
+            const status = booking.status || 'pending';
+            const statusBadge = status === 'confirmed' ? '<span style="background: #2ecc71; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✓ ĐÃ XÁC NHẬN</span>' : 
+                                status === 'unavailable' ? '<span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✗ HẾT BÀN</span>' :
+                                '<span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">⏱ CHỜ XÁC NHẬN</span>';
+            
+            // Hiển thị thông tin người đặt nếu là admin
+            const userInfo = currentUser.role === 'admin' ? 
+                `<div style="margin-bottom: 5px;">
+                    <small style="color: #666; font-weight: 600;">Người đặt: ${booking.name}</small>
+                    ${booking.userEmail ? `<br><small style="color: #666;">Email: ${booking.userEmail}</small>` : ''}
+                </div>` : '';
+            
+            // Nút điều khiển dựa trên vai trò
+            let actionButtons = '';
+            
+            if (currentUser.role === 'admin') {
+                // Admin có thể xác nhận, đánh dấu hết bàn, hoặc xóa
+                actionButtons = `
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;">
+                        <button onclick="confirmBooking(${booking.id})" ${status === 'confirmed' ? 'disabled' : ''} style="padding: 10px; background: ${status === 'confirmed' ? '#95a5a6' : '#2ecc71'}; color: white; border: none; border-radius: 8px; cursor: ${status === 'confirmed' ? 'not-allowed' : 'pointer'}; font-weight: 600; transition: all 0.3s ease;">
+                            <i class="fas fa-check-circle"></i> Xác Nhận
+                        </button>
+                        <button onclick="markUnavailable(${booking.id})" ${status === 'unavailable' ? 'disabled' : ''} style="padding: 10px; background: ${status === 'unavailable' ? '#95a5a6' : '#e74c3c'}; color: white; border: none; border-radius: 8px; cursor: ${status === 'unavailable' ? 'not-allowed' : 'pointer'}; font-weight: 600; transition: all 0.3s ease;">
+                            <i class="fas fa-times-circle"></i> Hết Bàn
+                        </button>
+                        <button onclick="deleteBooking(${booking.id})" style="padding: 10px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                            <i class="fas fa-trash"></i> Xóa
+                        </button>
+                    </div>
+                `;
+            } else {
+                // User chỉ có thể xóa khi chưa có trạng thái (chờ xác nhận)
+                actionButtons = `
+                    <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                        <button onclick="deleteBooking(${booking.id})" ${status !== 'pending' ? 'disabled' : ''} style="padding: 10px; background: ${status !== 'pending' ? '#95a5a6' : '#ff6b6b'}; color: white; border: none; border-radius: 8px; cursor: ${status !== 'pending' ? 'not-allowed' : 'pointer'}; font-weight: 600; transition: all 0.3s ease;">
+                            <i class="fas fa-trash"></i> ${status !== 'pending' ? 'Không thể hủy' : 'Hủy đặt bàn'}
+                        </button>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div style="padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fafafa; transition: all 0.3s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <h4 style="color: #2c3e50; margin: 0; font-size: 1.1rem;">#${filteredHistory.length - index}</h4>
+                            ${statusBadge}
+                        </div>
+                        <span style="color: #2a6bff; font-weight: 600; font-size: 0.9rem;">${booking.submittedAt}</span>
+                    </div>
+                    
+                    ${userInfo}
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <p style="color: #999; margin: 0 0 5px 0; font-size: 0.85rem; font-weight: 600;">Ngày - Giờ</p>
+                            <p style="color: #2c3e50; margin: 0; font-weight: 600;">${booking.displayDate} lúc ${booking.time}</p>
+                        </div>
+                        <div>
+                            <p style="color: #999; margin: 0 0 5px 0; font-size: 0.85rem; font-weight: 600;">Thời lượng</p>
+                            <p style="color: #2c3e50; margin: 0; font-weight: 600;">${booking.duration} giờ</p>
+                        </div>
+                        <div>
+                            <p style="color: #999; margin: 0 0 5px 0; font-size: 0.85rem; font-weight: 600;">Số người</p>
+                            <p style="color: #2c3e50; margin: 0; font-weight: 600;">${booking.people} người</p>
+                        </div>
+                        <div>
+                            <p style="color: #999; margin: 0 0 5px 0; font-size: 0.85rem; font-weight: 600;">Loại bàn</p>
+                            <p style="color: #2c3e50; margin: 0; font-weight: 600;">${tableTypeLabels[booking.tableType] || booking.tableType}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid #e0e0e0; padding-top: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <div>
+                                <p style="color: #999; margin: 0 0 3px 0; font-size: 0.85rem; font-weight: 600;">Tên khách</p>
+                                <p style="color: #2c3e50; margin: 0;">${booking.name}</p>
+                            </div>
+                            <div>
+                                <p style="color: #999; margin: 0 0 3px 0; font-size: 0.85rem; font-weight: 600;">Điện thoại</p>
+                                <p style="color: #2c3e50; margin: 0;">${booking.phone}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p style="color: #999; margin: 0 0 3px 0; font-size: 0.85rem; font-weight: 600;">Email</p>
+                            <p style="color: #2c3e50; margin: 0;">${booking.email}</p>
+                        </div>
+                        ${booking.specialRequests ? `<div style="margin-top: 10px;">
+                            <p style="color: #999; margin: 0 0 3px 0; font-size: 0.85rem; font-weight: 600;">Yêu cầu đặc biệt</p>
+                            <p style="color: #2c3e50; margin: 0;">${booking.specialRequests}</p>
+                        </div>` : ''}
+                    </div>
+                    
+                    ${actionButtons}
+                </div>
+            `;
+        });
+        
+        historyList.innerHTML = html;
+    }
+    
+    // Delete booking from history
+    function deleteBooking(bookingId) {
+        let bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        const booking = bookingHistory.find(b => b.id === bookingId);
+        
+        if (!booking) {
+            alert('Không tìm thấy đơn đặt bàn!');
+            return;
+        }
+        
+        // Kiểm tra quyền xóa
+        if (currentUser.role === 'admin') {
+            // Admin có thể xóa bất kỳ đơn nào
+            if (confirm('Bạn chắc chắn muốn xóa đơn đặt bàn này?')) {
+                bookingHistory = bookingHistory.filter(b => b.id !== bookingId);
+                localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+                updateHistoryCount();
+                loadBookingHistory();
+                alert('✓ Đã xóa đơn đặt bàn!');
+            }
+        } else {
+            // User chỉ có thể xóa đơn của mình và khi chưa có trạng thái
+            if (booking.userId !== currentUser.id) {
+                alert('Bạn không có quyền xóa đơn đặt bàn này!');
+                return;
+            }
+            
+            if (booking.status !== 'pending') {
+                alert('Không thể hủy đơn đã được xác nhận hoặc đánh dấu hết bàn!');
+                return;
+            }
+            
+            if (confirm('Bạn chắc chắn muốn hủy đơn đặt bàn này?')) {
+                bookingHistory = bookingHistory.filter(b => b.id !== bookingId);
+                localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+                updateHistoryCount();
+                loadBookingHistory();
+                alert('✓ Đã hủy đơn đặt bàn!');
+            }
+        }
+    }
+    
+    // Confirm booking - Chỉ admin mới có quyền
+    function confirmBooking(bookingId) {
+        if (currentUser.role !== 'admin') {
+            alert('Chỉ quản trị viên mới có quyền xác nhận đặt bàn!');
+            return;
+        }
+        
+        let bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        const booking = bookingHistory.find(b => b.id === bookingId);
+        if (booking) {
+            booking.status = 'confirmed';
+            localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+            loadBookingHistory();
+            alert('✓ Đã xác nhận đặt bàn thành công!');
+        }
+    }
+    
+    // Mark booking as unavailable - Chỉ admin mới có quyền
+    function markUnavailable(bookingId) {
+        if (currentUser.role !== 'admin') {
+            alert('Chỉ quản trị viên mới có quyền đánh dấu hết bàn!');
+            return;
+        }
+        
+        if (confirm('Xác nhận đánh dấu là HẾT BÀN?')) {
+            let bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+            const booking = bookingHistory.find(b => b.id === bookingId);
+            if (booking) {
+                booking.status = 'unavailable';
+                localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+                loadBookingHistory();
+                alert('✗ Đã đánh dấu hết bàn!');
+            }
+        }
+    }
+    
+    // Update history count badge - chỉ đếm đơn của user nếu không phải admin
+    function updateHistoryCount() {
+        const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        let count = 0;
+        
+        if (currentUser.role === 'admin') {
+            count = bookingHistory.length;
+        } else if (currentUser.id) {
+            count = bookingHistory.filter(booking => booking.userId === currentUser.id).length;
+        }
+        
+        document.getElementById('history-count').textContent = count;
+    }
+    
+    // Initialize date picker
+    function initBookingPage() {
+        const today = new Date();
+        
+        // Format date as DD/MM/YYYY for Vietnamese display
+        function formatDateVN(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        
+        // Set default date to today (current date)
+        const dateInput = document.getElementById('booking-date');
+        const dateDisplay = document.getElementById('booking-date-display');
+        
+        if (dateInput && dateDisplay) {
+            const todayStr = today.toISOString().split('T')[0];
+            dateInput.value = todayStr;
+            dateInput.min = todayStr; // Prevent selecting past dates
+            dateDisplay.value = formatDateVN(today); // Show as DD/MM/YYYY
+            
+            // Handle date picker click
+            dateDisplay.addEventListener('click', function() {
+                dateInput.showPicker ? dateInput.showPicker() : dateInput.click();
+            });
+            
+            // Update display when date changes
+            dateInput.addEventListener('change', function() {
+                if (this.value) {
+                    const selectedDate = new Date(this.value + 'T00:00:00');
+                    dateDisplay.value = formatDateVN(selectedDate);
+                }
+            });
+        }
+        
+        // Set default time to current time
+        const timeInput = document.getElementById('booking-time');
+        if (timeInput) {
+            const currentHour = today.getHours().toString().padStart(2, '0');
+            const currentMinute = today.getMinutes().toString().padStart(2, '0');
+            timeInput.value = `${currentHour}:${currentMinute}`;
+        }
+        
+        // Update history count on load
+        updateHistoryCount();
+    }
+    
+    window.addEventListener('load', initBookingPage);
+</script>
+</body>
+</html>

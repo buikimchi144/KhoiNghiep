@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Đánh Giá | Café Focus</title>
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="../images/logo1.jpg">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+       <nav class="navbar">
+            <div class="container">
+                <a href="../index.html" class="logo">
+                    <img src="../images//logo1.jpg" alt="Café Focus Logo" height="40">
+                    <span>Café Focus</span>
+                </a>
+                
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="../index.html" >TRANG CHỦ</a></li>
+                    <li><a href="about.html" >VỀ CHÚNG TÔI</a></li>
+                    <li><a href="services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                    <li><a href="menu.html">MENU</a></li>  
+                    <li><a href="contact.html">ĐẶT BÀN</a></li>  
+                    <li><a href="reviews.html" class="active">ĐÁNH GIÁ <i class="fas fa-star"></i></a></li> 
+                </ul>
+                
+                <!-- User Menu - ĐÃ DI CHUYỂN VÀO TRONG CONTAINER -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-btn" id="userBtn">
+                        <span id="userName">Tài khoản</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-info">
+                            <div class="user-avatar" id="userAvatar">ND</div>
+                            <div>
+                                <strong id="dropdownUserName">Người dùng</strong>
+                                <small id="userEmail">user@example.com</small>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    <!-- Hero Reviews Section -->
+    <section class="reviews-hero">
+        <div class="container">
+            <div class="reviews-hero-content">
+                <h1>Đánh giá từ những khách hàng của chúng tôi</h1>
+                <p>Hơn 500+ khách hàng hài lòng đã trải nghiệm không gian Café Focus</p>
+                <div class="rating-overview">
+                    <div class="overall-rating">
+                        <span class="rating-number">4.8</span>
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="rating-count">Dựa trên 527 đánh giá</p>
+                    </div>
+                    <div class="rating-bars">
+                        <div class="rating-bar" data-rating="5" style="cursor: pointer;">
+                            <span>5 sao</span>
+                            <div class="bar">
+                                <div class="fill" style="width: 78%"></div>
+                            </div>
+                            <span>78%</span>
+                        </div>
+                        <div class="rating-bar" data-rating="4" style="cursor: pointer;">
+                            <span>4 sao</span>
+                            <div class="bar">
+                                <div class="fill" style="width: 15%"></div>
+                            </div>
+                            <span>15%</span>
+                        </div>
+                        <div class="rating-bar" data-rating="3" style="cursor: pointer;">
+                            <span>3 sao</span>
+                            <div class="bar">
+                                <div class="fill" style="width: 5%"></div>
+                            </div>
+                            <span>5%</span>
+                        </div>
+                        <div class="rating-bar" data-rating="2" style="cursor: pointer;">
+                            <span>2 sao</span>
+                            <div class="bar">
+                                <div class="fill" style="width: 1%"></div>
+                            </div>
+                            <span>1%</span>
+                        </div>
+                        <div class="rating-bar" data-rating="1" style="cursor: pointer;">
+                            <span>1 sao</span>
+                            <div class="bar">
+                                <div class="fill" style="width: 1%"></div>
+                            </div>
+                            <span>1%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Filter -->
+    <section class="reviews-filter">
+        <div class="container">
+            <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">Tất cả</button>
+                <button class="filter-btn" data-filter="latest">Mới nhất</button>
+                <button class="filter-btn" data-filter="1">1 sao</button>
+                <button class="filter-btn" data-filter="2">2 sao</button>
+                <button class="filter-btn" data-filter="3">3 sao</button>
+                <button class="filter-btn" data-filter="4">4 sao</button>
+                <button class="filter-btn" data-filter="5">5 sao</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Grid -->
+    <section class="reviews-section" id="reviews">
+        <div class="container">
+            <h2 class="section-title">Đánh giá gần đây</h2>
+            
+            <div class="reviews-grid">
+                <!-- Đánh giá sẽ được load từ localStorage -->
+            </div>
+
+            <div class="load-more">
+                <button class="btn btn-secondary" id="loadMoreReviews">Xem thêm đánh giá</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Review Section -->
+    <section class="add-review-section" id="review-form">
+        <div class="container">
+            <div class="add-review-card">
+                <h2 class="section-title">Chia sẻ trải nghiệm của bạn</h2>
+                <p>Chúng tôi rất trân trọng ý kiến đóng góp của bạn</p>
+                
+                <form class="review-form" id="reviewForm">
+                    <div class="form-group">
+                        <label for="reviewerName">Họ tên *</label>
+                        <input type="text" id="reviewerName" required placeholder="Nhập họ tên của bạn">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reviewerEmail">Email</label>
+                        <input type="email" id="reviewerEmail" placeholder="email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Đánh giá sao *</label>
+                        <div class="star-rating" id="starRating">
+                            <i class="far fa-star" data-rating="1" style="cursor: pointer;"></i>
+                            <i class="far fa-star" data-rating="2" style="cursor: pointer;"></i>
+                            <i class="far fa-star" data-rating="3" style="cursor: pointer;"></i>
+                            <i class="far fa-star" data-rating="4" style="cursor: pointer;"></i>
+                            <i class="far fa-star" data-rating="5" style="cursor: pointer;"></i>
+                        </div>
+                        <input type="hidden" id="ratingValue" value="0" required>
+                        <span id="ratingText" style="margin-left: 1rem; font-size: 1.2rem; color: #f39c12; font-weight: 600;"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reviewTitle">Tiêu đề đánh giá *</label>
+                        <input type="text" id="reviewTitle" required placeholder="Ví dụ: Không gian tuyệt vời!">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reviewContent">Nội dung đánh giá *</label>
+                        <textarea id="reviewContent" rows="5" required placeholder="Chia sẻ chi tiết trải nghiệm của bạn..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reviewImages">Hình ảnh (tối đa 3 ảnh)</label>
+                        <input type="file" id="reviewImages" accept="image/*" multiple>
+                        <small>Định dạng: JPG, PNG. Tối đa 5MB/ảnh</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </form>
+
+                <!-- Thông báo thành công -->
+                <div id="reviewSuccess" class="review-success" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Cảm ơn bạn đã đánh giá!</h3>
+                    <p>Đánh giá của bạn đã được gửi thành công.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QR Code Section -->
+<section class="section qr-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 3rem 0;">
+    <div class="container">
+        <div style="text-align: center; color: white;">
+            <h2 style="font-size: 2rem; margin-bottom: 1rem; font-weight: 700;">QUÉT MÃ QR ĐỂ ĐÁNH GIÁ</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9;">Sử dụng camera điện thoại để quét mã QR và để lại đánh giá của bạn</p>
+            
+            <div style="background: white; display: inline-block; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                <!-- Thay thế QR code động bằng hình ảnh tĩnh -->
+                <img src="../images/qr.jpg" alt="QR Code đánh giá" style="width: 200px; height: 200px;">
+                <p style="color: #2c3e50; margin-top: 1rem; font-weight: 600;">Quét để đánh giá ngay</p>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <p style="font-size: 0.95rem; opacity: 0.9;">
+                    <i class="fas fa-mobile-alt"></i> Mở camera → Quét mã QR → Điền form đánh giá
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Café Focus</h3>
+                    <p>Mô hình Café Focus kết hợp công nghệ, mang đến không gian làm việc & học tập hiệu quả nhất</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a href="../index.html">TRANG CHỦ</a></li>
+                        <li><a href="about.html">VỀ CHÚNG TÔI</a></li>
+                        <li><a href="services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
+                        <li><a href="menu.html">MENU</a></li>
+                        <li><a href="contact.html">ĐẶT BÀN</a></li>
+                        <li><a href="reviews.html" class="active">ĐÁNH GIÁ⭐</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Liên hệ</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> 123A, Đường Nguyễn Văn Cừ Nối Dài, Phường Ninh Kiều, Cần Thơ</p>
+                    <p><i class="fas fa-phone"></i> 0909 123 456</p>
+                    <p><i class="fas fa-envelope"></i> info@cafefocus.com</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Giờ mở cửa</h3>
+                    <p>Thứ 2 - Thứ 7: 7:00 - 00:00</p>
+                    <p>Chủ nhật: 7:00 - 22:00</p>
+                    <p>Mở cửa cả ngày lễ</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Café Focus. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

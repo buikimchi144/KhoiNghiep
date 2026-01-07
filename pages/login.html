@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập | Café Focus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #2A6BFF 0%, #00C9A7 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .login-logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .login-logo span {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .login-header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        .form-control:focus {
+            border-color: #2A6BFF;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(42, 107, 255, 0.1);
+            outline: none;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            margin-bottom: 20px;
+        }
+
+        .role-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .role-option {
+            flex: 1;
+            text-align: center;
+        }
+
+        .role-radio {
+            display: none;
+        }
+
+        .role-label {
+            display: block;
+            padding: 12px;
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .role-label i {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .role-radio:checked + .role-label {
+            background: linear-gradient(135deg, #2A6BFF 0%, #00C9A7 100%);
+            color: white;
+            border-color: #2A6BFF;
+        }
+
+        .role-radio:checked + .role-label i {
+            color: white;
+        }
+
+        .role-label:hover {
+            border-color: #2A6BFF;
+            transform: translateY(-2px);
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2A6BFF;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2A6BFF 0%, #00C9A7 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(42, 107, 255, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid #fcc;
+        }
+
+        .demo-info {
+            background: #f0f7ff;
+            border-left: 4px solid #2A6BFF;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+
+        .demo-info h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2A6BFF;
+            font-size: 14px;
+        }
+
+        .demo-info p {
+            margin: 5px 0;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 10px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .register-link a {
+            color: #2A6BFF;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">
+                <span>Café Focus</span>
+            </div>
+            <h1>Đăng nhập hệ thống</h1>
+            <p>Chọn vai trò và đăng nhập để bắt đầu</p>
+        </div>
+
+        <div class="login-form">
+            <!-- Demo Account Info -->
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message">
+                <span id="errorText"></span>
+            </div>
+
+            <form id="loginForm">
+                <!-- Role Selection -->
+                <div class="form-group role-selection">
+                    <label>Vai trò đăng nhập</label>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input type="radio" id="role-user" name="role" value="user" class="role-radio" checked>
+                            <label for="role-user" class="role-label">
+                                <i class="fas fa-user"></i>
+                                Khách hàng
+                            </label>
+                        </div>
+    
+                        <div class="role-option">
+                            <input type="radio" id="role-admin" name="role" value="admin" class="role-radio">
+                            <label for="role-admin" class="role-label">
+                                <i class="fas fa-user-shield"></i>
+                                Quản trị
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="text" 
+                               id="email" 
+                               class="form-control" 
+                               placeholder="Nhập email"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" 
+                               id="password" 
+                               class="form-control" 
+                               placeholder="Nhập mật khẩu"
+                               required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Ghi nhớ đăng nhập</label>
+                    </div>
+                    <a href="forgot-password.html" style="color: #2A6BFF; text-decoration: none;">Quên mật khẩu?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Đăng nhập
+                </button>
+            </form>
+
+            <div class="register-link">
+                Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+            </div>
+        </div>
+
+        <div class="login-footer">
+            <p>© 2025 Café Focus. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </div>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        // ==================== LOGIN SYSTEM WITH ROLE SELECTION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔐 Login System with Role Selection Loading...');
+            
+            // DOM Elements
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const rememberMe = document.getElementById('rememberMe');
+            const roleRadios = document.querySelectorAll('input[name="role"]');
+            
+            // Auto-fill based on role selection
+            roleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateDemoCredentials(this.value);
+                });
+            });
+            
+            // Update demo credentials based on role
+            function updateDemoCredentials(role) {
+                const credentials = {
+                    'user': { email: 'user@example.com', password: 'password123' },
+                    'staff': { email: 'staff@cafefocus.com', password: 'staff123' },
+                    'admin': { email: 'admin@cafefocus.com', password: 'admin123' }
+                };
+                
+                if (credentials[role]) {
+                    emailInput.value = credentials[role].email;
+                    passwordInput.value = credentials[role].password;
+                }
+            }
+            
+            // Initialize with default role
+            updateDemoCredentials('user');
+            
+            // Check if already logged in
+            checkLoginStatus();
+            
+            // Toggle password visibility
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            // Check login status
+            function checkLoginStatus() {
+                const user = localStorage.getItem('cafeUser');
+                const lastLogin = localStorage.getItem('lastLogin');
+                
+                if (user && lastLogin) {
+                    const loginTime = new Date(lastLogin);
+                    const now = new Date();
+                    const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+                    
+                    // Auto logout after 24 hours for security
+                    if (hoursSinceLogin > 24) {
+                        localStorage.removeItem('cafeUser');
+                        localStorage.removeItem('lastLogin');
+                    } else {
+                        // Already logged in, redirect to home
+                        window.location.href = '../index.html';
+                    }
+                }
+                
+                // Pre-fill remembered email
+                const rememberedEmail = localStorage.getItem('rememberedEmail');
+                if (rememberedEmail && emailInput) {
+                    emailInput.value = rememberedEmail;
+                    rememberMe.checked = true;
+                }
+            }
+            
+            // Show error message
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.style.display = 'block';
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Set loading state
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    loginBtn.classList.add('loading');
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = 'Đang đăng nhập...';
+                } else {
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = 'Đăng nhập';
+                }
+            }
+            
+            // Validate email
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            // Get selected role
+            function getSelectedRole() {
+                const selectedRadio = document.querySelector('input[name="role"]:checked');
+                return selectedRadio ? selectedRadio.value : 'user';
+            }
+            
+            // Login function
+            async function login(email, password) {
+                setLoading(true);
+                
+                try {
+                    // Load users from JSON
+                    const response = await fetch('../data/users.json');
+                    const data = await response.json();
+                    
+                    // Find user by email and password
+                    const user = data.users.find(u => u.email === email && u.password === password);
+                    
+                    if (user) {
+                        // Check role if not admin
+                        const selectedRole = getSelectedRole();
+                        
+                        if (selectedRole === 'admin' && user.role !== 'admin') {
+                            throw new Error('Bạn không có quyền truy cập quản trị');
+                        }
+                        
+                        if (selectedRole === 'staff' && !['staff', 'admin'].includes(user.role)) {
+                            throw new Error('Bạn không có quyền truy cập nhân viên');
+                        }
+                        
+                        // Successful login
+                        const userData = {
+                            id: user.id,
+                            email: user.email,
+                            name: user.name,
+                            avatar: user.avatar,
+                            role: user.role,
+                            loginTime: new Date().toISOString(),
+                            lastActivity: new Date().toISOString(),
+                            selectedRole: selectedRole
+                        };
+                        
+                        // Save to localStorage
+                        localStorage.setItem('cafeUser', JSON.stringify(userData));
+                        localStorage.setItem('lastLogin', new Date().toISOString());
+                        
+                        // Save remembered email
+                        if (rememberMe.checked) {
+                            localStorage.setItem('rememberedEmail', email);
+                        } else {
+                            localStorage.removeItem('rememberedEmail');
+                        }
+                        
+                        // Redirect based on role
+                        setTimeout(() => {
+                            let redirectUrl = '../index.html';
+                            
+                            if (selectedRole === 'admin') {
+                                redirectUrl = '../index.html';
+                            } else if (selectedRole === 'staff') {
+                                redirectUrl = '../index.html';
+                            }
+                            
+                            console.log(`🔄 Redirecting to: ${redirectUrl}`);
+                            window.location.href = redirectUrl;
+                        }, 1000);
+                        
+                    } else {
+                        // Invalid credentials
+                        showError('Email hoặc mật khẩu không đúng!');
+                        setLoading(false);
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Login error:', error);
+                    showError(error.message || 'Lỗi kết nối. Vui lòng thử lại!');
+                    setLoading(false);
+                }
+            }
+            
+            // Form submission
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const selectedRole = getSelectedRole();
+                
+                // Simple validation
+                if (!email) {
+                    showError('Vui lòng nhập email');
+                    return;
+                }
+                
+                if (!validateEmail(email)) {
+                    showError('Email không hợp lệ');
+                    return;
+                }
+                
+                if (!password) {
+                    showError('Vui lòng nhập mật khẩu');
+                    return;
+                }
+                
+                // Role-specific validation
+                if (selectedRole === 'admin') {
+                    // Check if trying to login as admin with non-admin credentials
+                    if (!email.includes('admin') && password !== 'admin123') {
+                        showError('Vui lòng sử dụng tài khoản quản trị viên');
+                        return;
+                    }
+                }
+                
+                await login(email, password, selectedRole);
+            });
+            
+            // Auto-focus email input
+            emailInput.focus();
+            
+            console.log('✅ Login System with Role Selection Ready!');
+        });
+    </script>
+</body>
+</html>
