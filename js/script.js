@@ -11,7 +11,7 @@
         '' // trang chủ
     ];
     
-    // Lấy tên trang hiện tại
+   
     const currentPath = window.location.pathname;
     const segments = currentPath.split('/');
     let currentPage = segments[segments.length - 1] || 'index.html';
