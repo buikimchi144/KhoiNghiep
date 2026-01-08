@@ -16,7 +16,7 @@
     const segments = currentPath.split('/');
     let currentPage = segments[segments.length - 1] || 'index.html';
     
-    // Xóa query parameters và hash
+
     currentPage = currentPage.split('?')[0].split('#')[0];
     
     console.log('🔐 AUTH CHECK:');

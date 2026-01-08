@@ -1324,10 +1324,10 @@
                 return;
             }
 
-            // Only consider bookings on the same date
+  
             if (b.date !== date) return;
 
-            
+
             // If no time filter provided, mark table unavailable for that date
             if (!time) {
                 unavailable.push(Number(b.tableNumber));
