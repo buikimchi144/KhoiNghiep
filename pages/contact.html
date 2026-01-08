@@ -28,7 +28,7 @@
                     <li><a href="services.html">KHÔNG GIAN & DỊCH VỤ</a></li>
                     <li><a href="menu.html">MENU</a></li>  
                     <li><a href="contact.html" class="active">ĐẶT BÀN</a></li>  
-                    <li><a href="reviews.html">ĐÁNH GIÁ <i class="fas fa-star"></i></a></li> 
+                    <li><a href="reviews.html">ĐÁNH GIÁ <i class="fas fa-star"></i></a></li>
                 </ul>
                 
                 <!-- User Menu - ĐÃ DI CHUYỂN VÀO TRONG CONTAINER -->
@@ -46,6 +46,9 @@
                             </div>
                         </div>
                         <div class="dropdown-divider"></div>
+                        <a href="orders.html" class="dropdown-item">
+                            <i class="fas fa-shopping-bag"></i> Đơn hàng
+                        </a>
                         <button class="dropdown-item logout-btn" id="logoutBtn">
                             <i class="fas fa-sign-out-alt"></i> Đăng xuất
                         </button>
@@ -169,6 +172,13 @@
                                 </div>
                             </div>
                             <input type="hidden" id="table-type" name="table-type" required>
+                            <!-- Chọn số bàn (sẽ được populate bởi JS) -->
+                            <div class="form-group" style="margin-top:12px;">
+                                <label for="table-number">CHỌN BÀN <span class="required">*</span></label>
+                                <select id="table-number" name="table-number" required>
+                                    <option value="">Chọn bàn (tự động hiển thị theo loại)</option>
+                                </select>
+                            </div>
                         </div>
                         
                         <!-- Thông tin người đặt -->
@@ -237,7 +247,31 @@
                     
                     <!-- Lịch sử đặt bàn -->
                     <div id="booking-history-tab" style="display: none;">
-                        <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;"><i class="fas fa-history"></i> LỊCH SỬ ĐẶT BÀN</h3>
+                        <h3 style="color: #2c3e50; margin-bottom: 12px; font-size: 1.5rem;"><i class="fas fa-history"></i> LỊCH SỬ ĐẶT BÀN</h3>
+
+                        <!-- Filters for booking history -->
+                        <div class="booking-filters" style="display:flex;gap:10px;align-items:center;margin:8px 0 18px;flex-wrap:wrap;">
+                            <select id="booking-filter-status" style="padding:8px;border-radius:8px;border:1px solid #ddd;">
+                                <option value="all">Tất cả trạng thái</option>
+                                <option value="pending">Chờ xác nhận</option>
+                                <option value="confirmed">Đã xác nhận</option>
+                                <option value="checked-in">Checked-in / Đang sử dụng</option>
+                                <option value="completed">Hoàn tất</option>
+                                <option value="no-show">Không đến</option>
+                                <option value="unavailable">Hết bàn</option>
+                            </select>
+
+                            <input id="booking-filter-time" type="time" title="Lọc theo giờ check-in" style="padding:8px;border-radius:8px;border:1px solid #ddd;" />
+
+                            <select id="booking-filter-table" style="padding:8px;border-radius:8px;border:1px solid #ddd;min-width:140px;">
+                                <option value="">Tất cả bàn</option>
+                            </select>
+
+                            <input id="booking-filter-search" placeholder="Tìm kiếm tên, điện thoại, email..." style="flex:1;min-width:180px;padding:8px;border-radius:8px;border:1px solid #ddd;" />
+
+                            <button id="booking-filter-clear" style="padding:8px 12px;border-radius:8px;border:none;background:#95a5a6;color:white;cursor:pointer;">Xóa</button>
+                        </div>
+
                         <div id="booking-history-list" style="display: grid; gap: 15px;">
                             <p style="text-align: center; color: #999; padding: 30px;">Chưa có lịch sử đặt bàn</p>
                         </div>
@@ -614,7 +648,12 @@
                 this.classList.add('active');
                 
                 // Set the value to hidden input
-                tableTypeInput.value = this.getAttribute('data-type');
+                        tableTypeInput.value = this.getAttribute('data-type');
+
+                        // Update available tables dropdown based on selected type
+                        if (typeof updateAvailableTables === 'function') {
+                            updateAvailableTables(tableTypeInput.value);
+                        }
             });
         });
         
@@ -640,6 +679,7 @@
                     'duration',
                     'number-of-people',
                     'table-type',
+                    'table-number',
                     'customer-name',
                     'customer-phone',
                     'customer-email'
@@ -700,14 +740,30 @@
                     duration: document.getElementById('duration').value,
                     people: document.getElementById('number-of-people').value,
                     tableType: document.getElementById('table-type').value,
+                    tableNumber: document.getElementById('table-number').value,
                     name: document.getElementById('customer-name').value,
                     phone: document.getElementById('customer-phone').value,
                     email: document.getElementById('customer-email').value,
-                    specialRequests: document.getElementById('special-requests').value,
                     notes: document.getElementById('additional-notes').value,
                     userId: currentUser.id,
                     userEmail: currentUser.email
                 };
+
+                // Check selected table availability (if helper exists)
+                const selectedTable = formData.tableNumber;
+                if (selectedTable) {
+                    if (typeof getUnavailableTables === 'function') {
+                        const unavailable = getUnavailableTables(formData.date, formData.time, formData.duration);
+                        if (unavailable.includes(Number(selectedTable))) {
+                            alert('BÀN ĐÃ ĐƯỢC CHỌN. VUI LÒNG CHỌN BÀN KHÁC.');
+                            // Restore submit button
+                            const submitBtn = bookingForm.querySelector('button[type="submit"]');
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                    }
+                }
                 
                 // Simulate API call
                 setTimeout(() => {
@@ -945,6 +1001,71 @@
                 booking.userId === currentUser.id
             );
         }
+
+        // Apply UI filters (status, time, table, datetime ± hours, search)
+        const statusFilterEl = document.getElementById('booking-filter-status');
+        const timeFilterEl = document.getElementById('booking-filter-time');
+        const tableFilterEl = document.getElementById('booking-filter-table');
+        const refDateTimeEl = document.getElementById('booking-filter-datetime');
+        const hoursEl = document.getElementById('booking-filter-hours');
+        const searchFilterEl = document.getElementById('booking-filter-search');
+
+        const statusFilter = statusFilterEl ? statusFilterEl.value : 'all';
+        const timeFilter = timeFilterEl ? timeFilterEl.value : '';
+        const tableFilter = tableFilterEl ? tableFilterEl.value : '';
+        const refDateTime = refDateTimeEl ? refDateTimeEl.value : '';
+        const hoursRange = hoursEl ? Number(hoursEl.value) : 0;
+        const q = searchFilterEl ? searchFilterEl.value.trim().toLowerCase() : '';
+
+        if (statusFilter && statusFilter !== 'all') {
+            filteredHistory = filteredHistory.filter(b => (b.status || 'pending') === statusFilter);
+        }
+
+        if (timeFilter) {
+            // Treat selected time-of-day as a time that must fall inside the booking interval
+            filteredHistory = filteredHistory.filter(b => {
+                if (!b.date || !b.time) return false;
+                const bookingStart = new Date(b.date + 'T' + (b.time.length === 5 ? b.time : b.time + ':00'));
+                const durationHours = Number(b.duration) || 0;
+                const bookingEnd = new Date(bookingStart.getTime() + durationHours * 36e5);
+                const timeDt = new Date(b.date + 'T' + (timeFilter.length === 5 ? timeFilter : timeFilter + ':00'));
+                return timeDt >= bookingStart && timeDt <= bookingEnd;
+            });
+        }
+
+        if (refDateTime) {
+            // Reference datetime must fall within booking start..(start+duration)
+            const ref = new Date(refDateTime);
+            filteredHistory = filteredHistory.filter(b => {
+                if (!b.date || !b.time) return false;
+                const bookingStart = new Date(b.date + 'T' + (b.time.length === 5 ? b.time : b.time + ':00'));
+                const durationHours = Number(b.duration) || 0;
+                const bookingEnd = new Date(bookingStart.getTime() + durationHours * 36e5);
+                return ref >= bookingStart && ref <= bookingEnd;
+            });
+        } else if (hoursRange && hoursRange > 0) {
+            // Backwards-compatible: if user specified only hours-range, match bookings whose start is within ±hoursRange of now
+            const now = new Date();
+            filteredHistory = filteredHistory.filter(b => {
+                if (!b.date || !b.time) return false;
+                const bookingDt = new Date(b.date + 'T' + (b.time.length === 5 ? b.time : b.time + ':00'));
+                const diffHours = Math.abs((bookingDt - now) / 36e5);
+                return diffHours <= hoursRange;
+            });
+        }
+
+        if (tableFilter) {
+            filteredHistory = filteredHistory.filter(b => String(b.tableNumber || '') === String(tableFilter));
+        }
+
+        if (q) {
+            filteredHistory = filteredHistory.filter(b => {
+                const name = (b.name || '').toLowerCase();
+                const phone = (b.phone || '').toLowerCase();
+                const email = (b.email || '').toLowerCase();
+                return name.includes(q) || phone.includes(q) || email.includes(q);
+            });
+        }
         
         if (filteredHistory.length === 0) {
             const noBookingMsg = currentUser.role === 'admin' 
@@ -967,9 +1088,20 @@
         
         filteredHistory.forEach((booking, index) => {
             const status = booking.status || 'pending';
-            const statusBadge = status === 'confirmed' ? '<span style="background: #2ecc71; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✓ ĐÃ XÁC NHẬN</span>' : 
-                                status === 'unavailable' ? '<span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✗ HẾT BÀN</span>' :
-                                '<span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">⏱ CHỜ XÁC NHẬN</span>';
+            let statusBadge = '';
+            if (status === 'confirmed') {
+                statusBadge = '<span style="background: #2ecc71; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✓ ĐÃ XÁC NHẬN</span>';
+            } else if (status === 'checked-in') {
+                statusBadge = '<span style="background: #00a86b; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">🟢 ĐANG SỬ DỤNG</span>';
+            } else if (status === 'completed') {
+                statusBadge = '<span style="background: #3498db; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✅ HOÀN TẤT</span>';
+            } else if (status === 'no-show') {
+                statusBadge = '<span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">🚫 KHÔNG ĐẾN</span>';
+            } else if (status === 'unavailable') {
+                statusBadge = '<span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">✗ HẾT BÀN</span>';
+            } else {
+                statusBadge = '<span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">⏱ CHỜ XÁC NHẬN</span>';
+            }
             
             // Hiển thị thông tin người đặt nếu là admin
             const userInfo = currentUser.role === 'admin' ? 
@@ -982,18 +1114,23 @@
             let actionButtons = '';
             
             if (currentUser.role === 'admin') {
-                // Admin có thể xác nhận, đánh dấu hết bàn, hoặc xóa
+                // Admin uses a dropdown to manage status + delete
                 actionButtons = `
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;">
-                        <button onclick="confirmBooking(${booking.id})" ${status === 'confirmed' ? 'disabled' : ''} style="padding: 10px; background: ${status === 'confirmed' ? '#95a5a6' : '#2ecc71'}; color: white; border: none; border-radius: 8px; cursor: ${status === 'confirmed' ? 'not-allowed' : 'pointer'}; font-weight: 600; transition: all 0.3s ease;">
-                            <i class="fas fa-check-circle"></i> Xác Nhận
-                        </button>
-                        <button onclick="markUnavailable(${booking.id})" ${status === 'unavailable' ? 'disabled' : ''} style="padding: 10px; background: ${status === 'unavailable' ? '#95a5a6' : '#e74c3c'}; color: white; border: none; border-radius: 8px; cursor: ${status === 'unavailable' ? 'not-allowed' : 'pointer'}; font-weight: 600; transition: all 0.3s ease;">
-                            <i class="fas fa-times-circle"></i> Hết Bàn
-                        </button>
-                        <button onclick="deleteBooking(${booking.id})" style="padding: 10px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
-                            <i class="fas fa-trash"></i> Xóa
-                        </button>
+                    <div style="display: flex; gap: 10px; align-items: flex-end; margin-top: 15px;">
+                        <div style="flex:1;">
+                            <label style="display:block; font-size:0.85rem; color:#666; font-weight:600; margin-bottom:6px;">Trạng thái</label>
+                            <select onchange="updateBookingStatus(${booking.id}, this.value)" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #ddd; font-weight:600;">
+                                <option value="pending" ${status === 'pending' ? 'selected' : ''}>⏱ Chờ xác nhận</option>
+                                <option value="confirmed" ${status === 'confirmed' ? 'selected' : ''}>✓ Đã xác nhận</option>
+                                <option value="checked-in" ${status === 'checked-in' ? 'selected' : ''}>🟢 Checked-in / Đang sử dụng</option>
+                                <option value="completed" ${status === 'completed' ? 'selected' : ''}>✅ Hoàn tất</option>
+                                <option value="no-show" ${status === 'no-show' ? 'selected' : ''}>🚫 Không đến</option>
+                                <option value="unavailable" ${status === 'unavailable' ? 'selected' : ''}>✗ Hết bàn</option>
+                            </select>
+                        </div>
+                        <div style="width:120px;">
+                            <button onclick="deleteBooking(${booking.id})" style="width:100%; padding:10px; background:#ff6b6b; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;"> <i class="fas fa-trash"></i> Xóa</button>
+                        </div>
                     </div>
                 `;
             } else {
@@ -1038,6 +1175,17 @@
                         </div>
                     </div>
                     
+                    <div style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center;">
+                        <div>
+                            <p style="color: #999; margin: 0 0 3px 0; font-size: 0.85rem; font-weight: 600;">Bàn</p>
+                            <p style="color: #2c3e50; margin: 0; font-weight: 600;">${booking.tableNumber ? ('Bàn ' + booking.tableNumber) : '<em>Chưa chọn</em>'}</p>
+                        </div>
+                        ${currentUser.role === 'admin' ? (`<div style="margin-left: auto;">
+                            <label style="display:block; font-size:0.85rem; color:#666; font-weight:600; margin-bottom:6px;">Gán/Chọn lại bàn</label>
+                            <select id="table-select-${booking.id}" onchange="updateBookingTable(${booking.id}, this.value)" style="padding:8px 10px; border-radius:8px; border:1px solid #ddd;"></select>
+                        </div>`) : ''}
+                    </div>
+
                     <div style="border-top: 1px solid #e0e0e0; padding-top: 15px;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                             <div>
@@ -1065,6 +1213,23 @@
         });
         
         historyList.innerHTML = html;
+
+        // Initialize table select dropdowns after rendering
+        if (typeof initializeTableDropdowns === 'function') {
+            initializeTableDropdowns();
+        }
+
+        // Attach filter control handlers (idempotent assignment)
+        const statusEl = document.getElementById('booking-filter-status');
+        const timeEl = document.getElementById('booking-filter-time');
+        const tableEl = document.getElementById('booking-filter-table');
+        const searchEl = document.getElementById('booking-filter-search');
+        const clearBtn = document.getElementById('booking-filter-clear');
+        if (statusEl) statusEl.onchange = loadBookingHistory;
+        if (timeEl) timeEl.onchange = loadBookingHistory;
+        if (tableEl) tableEl.onchange = loadBookingHistory;
+        if (searchEl) searchEl.oninput = debounce(loadBookingHistory, 300);
+        if (clearBtn) clearBtn.onclick = function() { if(statusEl) statusEl.value = 'all'; if(timeEl) timeEl.value = ''; if(tableEl) tableEl.value = ''; if(searchEl) searchEl.value = ''; loadBookingHistory(); };
     }
     
     // Delete booking from history
@@ -1124,6 +1289,190 @@
             loadBookingHistory();
             alert('✓ Đã xác nhận đặt bàn thành công!');
         }
+    }
+
+    // --- Table availability and management helpers ---
+    function getAllTables() {
+        const tables = [];
+        for (let i = 1; i <= 20; i++) {
+            let type = 'single';
+            if (i <= 6) type = 'single';
+            else if (i <= 14) type = 'group';
+            else if (i <= 18) type = 'vip';
+            else type = 'outdoor';
+            tables.push({ number: i, type });
+        }
+        return tables;
+    }
+
+    // Return unavailable tables optionally filtered by date/time overlap.
+    // If `date` is provided, only bookings on that date are considered.
+    // If `time` and `duration` are provided, only bookings that overlap the
+    // given time interval are considered unavailable. If no `date` is passed,
+    // the function falls back to global behavior (all confirmed/checked-in tables).
+    function getUnavailableTables(date, time, duration) {
+        const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        const unavailable = [];
+
+        bookingHistory.forEach(b => {
+            if (!b.tableNumber) return;
+            if (!(b.status === 'confirmed' || b.status === 'checked-in')) return;
+
+            // If no filter date provided, keep original behavior (global unavailable)
+            if (!date) {
+                unavailable.push(Number(b.tableNumber));
+                return;
+            }
+
+            // Only consider bookings on the same date
+            if (b.date !== date) return;
+
+            // If no time filter provided, mark table unavailable for that date
+            if (!time) {
+                unavailable.push(Number(b.tableNumber));
+                return;
+            }
+
+            // Check time overlap between booking b and provided time+duration
+            function toDateTime(d, t) {
+                const tfull = (t || '').length === 5 ? t + ':00' : (t || '00:00:00');
+                return new Date(d + 'T' + tfull);
+            }
+
+            const bStart = toDateTime(b.date, b.time || '00:00');
+            const bDuration = Number(b.duration) || 0;
+            const bEnd = new Date(bStart.getTime() + bDuration * 36e5);
+
+            const selStart = toDateTime(date, time);
+            const selDuration = Number(duration) || 0;
+            const selEnd = new Date(selStart.getTime() + selDuration * 36e5);
+
+            // Overlap if selStart < bEnd && selEnd > bStart
+            if (selStart < bEnd && selEnd > bStart) {
+                unavailable.push(Number(b.tableNumber));
+            }
+        });
+
+        return Array.from(new Set(unavailable));
+    }
+
+    function updateAvailableTables(tableType) {
+        const select = document.getElementById('table-number');
+        if (!select) return;
+        const all = getAllTables().filter(t => !tableType || t.type === tableType);
+        const date = (document.getElementById('booking-date') && document.getElementById('booking-date').value) || '';
+        const time = (document.getElementById('booking-time') && document.getElementById('booking-time').value) || '';
+        const duration = (document.getElementById('duration') && document.getElementById('duration').value) || '';
+        const unavailable = getUnavailableTables(date, time, duration);
+        select.innerHTML = '<option value="">Chọn bàn (tự động hiển thị theo loại)</option>';
+        all.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.number;
+            opt.textContent = 'Bàn ' + t.number + (unavailable.includes(t.number) ? ' (Đã chọn)' : '');
+            if (unavailable.includes(t.number)) opt.disabled = true;
+            select.appendChild(opt);
+        });
+    }
+
+    function populateTableSelectForBooking(selectEl, booking) {
+        if (!selectEl) return;
+        selectEl.innerHTML = '';
+        const all = getAllTables();
+        // Allow showing tables of same type first
+        const preferred = all.filter(t => t.type === booking.tableType);
+        const others = all.filter(t => t.type !== booking.tableType);
+        const ordered = preferred.concat(others);
+        const unavailable = getUnavailableTables(booking.date, booking.time, booking.duration).filter(n => !(booking.tableNumber && Number(booking.tableNumber) === n));
+        selectEl.appendChild(new Option('Chưa chọn', ''));
+        ordered.forEach(t => {
+            const opt = new Option('Bàn ' + t.number, t.number);
+            if (unavailable.includes(t.number)) opt.disabled = true;
+            selectEl.appendChild(opt);
+        });
+        if (booking.tableNumber) selectEl.value = booking.tableNumber;
+    }
+
+    function initializeTableDropdowns() {
+        const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        bookingHistory.forEach(b => {
+            const sel = document.getElementById('table-select-' + b.id);
+            if (sel) populateTableSelectForBooking(sel, b);
+        });
+    }
+
+    // Populate the booking history table-filter dropdown (list of table numbers)
+    function populateBookingTableFilter() {
+        const sel = document.getElementById('booking-filter-table');
+        if (!sel) return;
+        sel.innerHTML = '<option value="">Tất cả bàn</option>';
+        const all = getAllTables();
+        all.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.number;
+            opt.textContent = 'Bàn ' + t.number;
+            sel.appendChild(opt);
+        });
+    }
+
+    function updateBookingTable(bookingId, tableNumber) {
+        if (currentUser.role !== 'admin') {
+            alert('Chỉ quản trị viên mới có quyền thay đổi bàn!');
+            return;
+        }
+
+        let bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        const booking = bookingHistory.find(b => b.id === bookingId);
+        if (!booking) {
+            alert('Đơn đặt bàn không tồn tại!');
+            return;
+        }
+
+        const num = tableNumber ? Number(tableNumber) : null;
+        const unavailable = getUnavailableTables(booking.date, booking.time, booking.duration).filter(n => !(booking.tableNumber && Number(booking.tableNumber) === n));
+        if (num && unavailable.includes(num)) {
+            alert('Bàn đã không khả dụng. Vui lòng chọn bàn khác.');
+            initializeTableDropdowns();
+            return;
+        }
+
+        booking.tableNumber = num;
+        localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+        loadBookingHistory();
+        alert('✓ Đã cập nhật thông tin bàn cho đơn đặt!');
+    }
+    
+    function updateBookingStatus(bookingId, newStatus) {
+        if (currentUser.role !== 'admin') {
+            alert('Chỉ quản trị viên mới có quyền thay đổi trạng thái!');
+            return;
+        }
+
+        let bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        const booking = bookingHistory.find(b => b.id === bookingId);
+        if (!booking) {
+            alert('Đơn đặt bàn không tồn tại!');
+            return;
+        }
+
+        // If confirming or checking-in and no table assigned, try to auto-assign an available table of the same type
+        if ((newStatus === 'confirmed' || newStatus === 'checked-in') && !booking.tableNumber) {
+            const all = getAllTables().filter(t => t.type === booking.tableType);
+            const unavailable = getUnavailableTables(booking.date, booking.time, booking.duration);
+            const available = all.map(t => t.number).filter(n => !unavailable.includes(n));
+            if (available.length > 0) {
+                booking.tableNumber = available[0];
+            } else {
+                alert('Không có bàn trống cho loại này. Vui lòng gán bàn trước khi xác nhận.');
+                loadBookingHistory();
+                initializeTableDropdowns();
+                return;
+            }
+        }
+
+        booking.status = newStatus;
+        localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
+        loadBookingHistory();
+        alert('✓ Trạng thái đơn đã được cập nhật!');
     }
     
     // Mark booking as unavailable - Chỉ admin mới có quyền
@@ -1204,6 +1553,12 @@
         }
         
         // Update history count on load
+        // Populate table dropdown based on default or selected table type
+        if (typeof updateAvailableTables === 'function') {
+            updateAvailableTables(document.getElementById('table-type').value || '');
+        }
+        // Populate table filter used in booking history
+        if (typeof populateBookingTableFilter === 'function') populateBookingTableFilter();
         updateHistoryCount();
     }
     

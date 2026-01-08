@@ -7,7 +7,7 @@
         'index.html',
         'about.html',
         'services.html',
-        'menu.html',
+        'orders.html',
         '' // trang chủ
     ];
     
@@ -1084,42 +1084,262 @@ function showComboConfirmation(comboName, comboPrice) {
 }
 
 function addToCart(name, price) {
-    console.log(`🛒 Added to cart: ${name} - ${price}`);
+    // Enhanced cart handling: update localStorage, UI and show brief notification
+    try {
+        const numericPrice = typeof price === 'number' ? price : parsePrice(price || '0');
+        const cart = getCart();
+
+        // Try to find existing item by name
+        let item = cart.find(i => i.name === name);
+        if (item) {
+            item.quantity += 1;
+        } else {
+            item = { id: Date.now() + Math.floor(Math.random()*1000), name, price: numericPrice, quantity: 1 };
+            cart.push(item);
+        }
+
+        saveCart(cart);
+        renderCartPanel();
+        updateCartSummary();
+
+        // Small success notification
+        const notification = document.createElement('div');
+        notification.textContent = `${name} đã được thêm vào giỏ hàng`;
+        notification.style.cssText = `position:fixed;right:20px;top:170px;background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.12);z-index:10000;`;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 2400);
+    } catch (err) {
+        console.error('Error adding to cart', err);
+    }
+}
+
+// --------- Cart helpers ---------
+function parsePrice(str) {
+    if (!str && str !== 0) return 0;
+    if (typeof str === 'number') return str;
+    // Remove non-digit characters
+    const digits = String(str).replace(/[^0-9]/g, '');
+    return parseInt(digits || '0', 10);
+}
+
+function formatPrice(num) {
+    if (!num) num = 0;
+    return new Intl.NumberFormat('vi-VN').format(num) + '₫';
+}
+
+function getCart() {
+    return JSON.parse(localStorage.getItem('cafeCart') || '[]');
+}
+
+function saveCart(cart) {
+    localStorage.setItem('cafeCart', JSON.stringify(cart));
+}
+
+function renderCartPanel() {
+    const cartItemsContainer = document.getElementById('cartItems');
+    const cartTotalEl = document.getElementById('cartTotal');
+    if (!cartItemsContainer || !cartTotalEl) return;
+
+    const cart = getCart();
+    cartItemsContainer.innerHTML = '';
+
+    let total = 0;
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<div style="padding:12px;color:#666">Giỏ hàng trống</div>';
+    } else {
+        cart.forEach(item => {
+            total += item.price * item.quantity;
+
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f1f1;gap:8px;';
+            row.innerHTML = `
+                <div style="flex:1;">
+                    <div style="font-weight:600">${item.name}</div>
+                    <div style="color:#888;font-size:0.95rem">${formatPrice(item.price)}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <button class="qty-btn" data-id="${item.id}" data-delta="-1" style="width:28px;height:28px;border-radius:6px;border:1px solid #ddd;background:#fff;">-</button>
+                    <div style="min-width:26px;text-align:center">${item.quantity}</div>
+                    <button class="qty-btn" data-id="${item.id}" data-delta="1" style="width:28px;height:28px;border-radius:6px;border:1px solid #ddd;background:#fff;">+</button>
+                </div>
+            `;
+
+            cartItemsContainer.appendChild(row);
+        });
+    }
+
+    cartTotalEl.textContent = formatPrice(total);
+
+    // Attach quantity handlers
+    cartItemsContainer.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = Number(this.getAttribute('data-id'));
+            const delta = Number(this.getAttribute('data-delta'));
+            changeQuantity(id, delta);
+        });
+    });
+}
+
+function updateCartSummary() {
+    const cart = getCart();
+    const count = cart.reduce((s, i) => s + i.quantity, 0);
+    const total = cart.reduce((s, i) => s + i.quantity * i.price, 0);
+    const summary = document.getElementById('cartSummary');
+    if (summary) summary.textContent = `${count} món • ${formatPrice(total)}`;
+}
+
+function changeQuantity(id, delta) {
+    const cart = getCart();
+    const idx = cart.findIndex(i => i.id === id);
+    if (idx === -1) return;
+    cart[idx].quantity += delta;
+    if (cart[idx].quantity <= 0) cart.splice(idx, 1);
+    saveCart(cart);
+    renderCartPanel();
+    updateCartSummary();
+}
+
+function clearCart() {
+    localStorage.removeItem('cafeCart');
+    renderCartPanel();
+    updateCartSummary();
+}
+
+// Initialize cart widget listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Render initial state
+    renderCartPanel();
+    updateCartSummary();
+
+    const cartToggle = document.getElementById('cartToggle');
+    const cartPanel = document.getElementById('cartPanel');
+    const closeCartPanel = document.getElementById('closeCartPanel');
+    const clearCartBtn = document.getElementById('clearCartBtn');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+    if (cartToggle && cartPanel) {
+        cartToggle.addEventListener('click', function() {
+            cartPanel.style.display = cartPanel.style.display === 'block' ? 'none' : 'block';
+            renderCartPanel();
+        });
+    }
+
+    if (closeCartPanel) closeCartPanel.addEventListener('click', () => { document.getElementById('cartPanel').style.display = 'none'; });
+    if (clearCartBtn) clearCartBtn.addEventListener('click', () => { if (confirm('Xóa toàn bộ giỏ hàng?')) clearCart(); });
+
+    if (placeOrderBtn) {
+        placeOrderBtn.addEventListener('click', () => {
+            const cart = getCart();
+            if (!cart || cart.length === 0) {
+                alert('Giỏ hàng trống');
+                return;
+            }
+            openPaymentModal();
+        });
+    }
+
+    // Payment modal handlers
+    const paymentModal = document.getElementById('paymentModal');
+    const paymentClose = document.getElementById('paymentClose');
+    const paymentCancelBtn = document.getElementById('paymentCancelBtn');
+    const paymentConfirmBtn = document.getElementById('paymentConfirmBtn');
+
+    function closePaymentModal() {
+        if (paymentModal) paymentModal.style.display = 'none';
+    }
+
+    if (paymentClose) paymentClose.addEventListener('click', closePaymentModal);
+    if (paymentCancelBtn) paymentCancelBtn.addEventListener('click', closePaymentModal);
+
+    if (paymentConfirmBtn) {
+        paymentConfirmBtn.addEventListener('click', function() {
+            // Confirm order: collect data and save to localStorage
+            const cart = getCart();
+            if (!cart || cart.length === 0) {
+                alert('Giỏ hàng trống');
+                return;
+            }
+
+            const customer = {
+                name: document.getElementById('customerName')?.value || '',
+                email: document.getElementById('customerEmail')?.value || '',
+                phone: document.getElementById('customerPhone')?.value || '',
+                notes: document.getElementById('orderNotes')?.value || '',
+                method: document.getElementById('paymentMethod')?.value || 'cash'
+            };
+
+            const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+            // Get current user role
+            const userData = JSON.parse(localStorage.getItem('cafeUser') || 'null');
+            const userRole = userData?.role || 'user';
+            
+            // Set initial order status based on user role
+            let orderStatus = 'Processing'; // Default for normal users
+            if (userRole === 'admin') {
+                // For admin, check if they selected a specific status in the payment modal
+                const statusSelect = document.getElementById('orderStatusSelect');
+                if (statusSelect) {
+                    orderStatus = statusSelect.value || 'Processing';
+                }
+            }
+
+            const order = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                items: cart,
+                total,
+                customer,
+                status: orderStatus,
+                userRole: userRole,
+                // attach user identifiers when available to associate orders with users
+                userId: userData?.id || null,
+                userEmail: userData?.email || (customer.email || null)
+            };
+
+            const orders = JSON.parse(localStorage.getItem('cafeOrders') || '[]');
+            orders.unshift(order);
+            localStorage.setItem('cafeOrders', JSON.stringify(orders));
+
+            // Clear cart and UI
+            clearCart();
+            closePaymentModal();
+            document.getElementById('cartPanel').style.display = 'none';
+
+            // Celebration and notification
+            try { createConfetti(); } catch (e) {}
+            alert('Đặt hàng thành công! Cảm ơn bạn.');
+        });
+    }
+});
+
+function openPaymentModal() {
+    const paymentModal = document.getElementById('paymentModal');
+    if (!paymentModal) return;
     
-    // Show notification
-    const notification = document.createElement('div');
-    notification.innerHTML = `
-        <div style="
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            max-width: 300px;
-        ">
-            <i class="fas fa-check-circle" style="font-size: 1.5rem;"></i>
-            <div>
-                <strong>Đã thêm vào giỏ hàng</strong>
-                <div style="font-size: 0.9rem;">${name}</div>
-            </div>
-        </div>
-    `;
+    // Check user role and show/hide status field
+    const userData = JSON.parse(localStorage.getItem('cafeUser') || 'null');
+    const userRole = userData?.role || 'user';
+    const adminStatusField = document.getElementById('adminStatusField');
+    if (adminStatusField) {
+        adminStatusField.style.display = userRole === 'admin' ? 'block' : 'none';
+    }
     
-    document.body.appendChild(notification);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
+    // Populate order items
+    const orderItems = document.getElementById('orderItems');
+    const orderTotalPrice = document.getElementById('orderTotalPrice');
+    const cart = getCart();
+    orderItems.innerHTML = '';
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex;justify-content:space-between;margin-bottom:8px;';
+        div.innerHTML = `<div>${item.name} x ${item.quantity}</div><div style="font-weight:700">${formatPrice(item.price*item.quantity)}</div>`;
+        orderItems.appendChild(div);
+    });
+    orderTotalPrice.textContent = formatPrice(total);
+    paymentModal.style.display = 'block';
 }
 
 // ==================== ADDITIONAL PERFORMANCE HELPERS ====================

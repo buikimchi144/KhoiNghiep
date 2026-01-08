@@ -142,10 +142,11 @@ body {
 
 .navbar .container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     position: relative;
     z-index: 2;
+    gap: 2rem;
 }
 
 .logo {
@@ -8356,7 +8357,6 @@ body {
 
 .user-menu {
     position: relative;
-    margin-left: auto;
 }
 
 .user-btn {
