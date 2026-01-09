@@ -94,11 +94,13 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Café Focus loading with optimizations...');
-    
+    initStarRating(); 
     // 1. MOBILE MENU TOGGLE (Essential)
     const menuToggle = document.getElementById('menuToggle');
     const navMenu = document.getElementById('navMenu');
-    
+       if (document.querySelector('.reviews-hero')) {
+        initializeReviewsPage();
+    }
     if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', function() {
             navMenu.classList.toggle('active');
@@ -1496,22 +1498,89 @@ window.addEventListener('load', function() {
 });
 
 // ==================== REVIEWS SYSTEM ====================
+// Hàm lưu đánh giá lên Firebase
+async function saveReviewToFirebase(review) {
+    try {
+        const { collection, addDoc } = window.firebaseModules;
+        const db = window.firebaseDB;
+        
+        // Thêm timestamp
+        review.createdAt = new Date().toISOString();
+        review.timestamp = Date.now();
+        
+        // Lưu lên Firestore
+        const docRef = await addDoc(collection(db, "reviews"), review);
+        console.log("✅ Review saved to Firebase with ID:", docRef.id);
+        
+        // Cũng lưu vào localStorage để cache
+        saveReviewToLocalStorage(review);
+        
+        return docRef.id;
+    } catch (error) {
+        console.error("❌ Error saving review to Firebase:", error);
+        // Fallback: lưu vào localStorage nếu Firebase lỗi
+        saveReviewToLocalStorage(review);
+        return null;
+    }
+}
+
+// Hàm lấy đánh giá từ Firebase
+async function loadReviewsFromFirebase() {
+    try {
+        const { collection, getDocs, query, orderBy, limit } = window.firebaseModules;
+        const db = window.firebaseDB;
+        
+        // Query reviews từ Firebase, sắp xếp mới nhất trước
+        const reviewsRef = collection(db, "reviews");
+        const q = query(reviewsRef, orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        const reviews = [];
+        querySnapshot.forEach((doc) => {
+            reviews.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        console.log(`✅ Loaded ${reviews.length} reviews from Firebase`);
+        
+        // Cache vào localStorage
+        localStorage.setItem('cafeReviews', JSON.stringify(reviews));
+        
+        return reviews;
+    } catch (error) {
+        console.error("❌ Error loading reviews from Firebase:", error);
+        // Fallback: dùng localStorage
+        return loadReviewsFromLocalStorage();
+    }
+}
+
+// Hàm hỗ trợ localStorage (fallback)
+function saveReviewToLocalStorage(review) {
+    let reviews = JSON.parse(localStorage.getItem('cafeReviews') || '[]');
+    reviews.unshift(review);
+    localStorage.setItem('cafeReviews', JSON.stringify(reviews));
+}
+
+function loadReviewsFromLocalStorage() {
+    return JSON.parse(localStorage.getItem('cafeReviews') || '[]');
+}
 // Calculate and update rating statistics
-function updateRatingStatistics() {
-    const reviews = JSON.parse(localStorage.getItem('cafeReviews') || '[]');
+async function updateRatingStatistics() {
+    const reviews = await loadReviewsFromFirebase();
     
     if (reviews.length === 0) {
-        // Show default if no reviews
         updateRatingDisplay(0, 0, {});
         return;
     }
     
-    // Calculate total and average rating
+    // Tính toán rating
     const totalReviews = reviews.length;
     const totalRating = reviews.reduce((sum, review) => sum + parseInt(review.rating || 0), 0);
     const averageRating = (totalRating / totalReviews).toFixed(1);
     
-    // Count reviews by rating
+    // Đếm theo sao
     const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     reviews.forEach(review => {
         const rating = parseInt(review.rating || 0);
@@ -1523,6 +1592,82 @@ function updateRatingStatistics() {
     updateRatingDisplay(averageRating, totalReviews, ratingCounts);
 }
 
+// ==================== STAR RATING HANDLER ====================
+function initStarRating() {
+    const starRating = document.getElementById('starRating');
+    const ratingValue = document.getElementById('ratingValue');
+    const ratingText = document.getElementById('ratingText');
+    
+    if (!starRating || !ratingValue) return;
+    
+    const stars = starRating.querySelectorAll('i');
+    let currentRating = 0;
+    
+    // Reset stars
+    function resetStars() {
+        stars.forEach(star => {
+            star.classList.remove('fas');
+            star.classList.add('far');
+            star.style.color = '#ddd';
+        });
+    }
+    
+    // Update stars display
+    function updateStars(rating) {
+        resetStars();
+        
+        for (let i = 0; i < rating; i++) {
+            stars[i].classList.remove('far');
+            stars[i].classList.add('fas');
+            stars[i].style.color = '#f39c12';
+        }
+        
+        // Update hidden input
+        ratingValue.value = rating;
+        
+        // Update text
+        if (ratingText) {
+            const texts = ['', 'Rất tệ', 'Không hài lòng', 'Bình thường', 'Tốt', 'Xuất sắc'];
+            ratingText.textContent = texts[rating] || '';
+        }
+    }
+    
+    // Add click event to each star
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            currentRating = rating;
+            updateStars(rating);
+        });
+        
+        // Hover effect
+        star.addEventListener('mouseenter', function() {
+            const hoverRating = parseInt(this.getAttribute('data-rating'));
+            
+            resetStars();
+            for (let i = 0; i < hoverRating; i++) {
+                stars[i].classList.remove('far');
+                stars[i].classList.add('fas');
+                stars[i].style.color = '#f8d04d'; // Lighter color for hover
+            }
+        });
+        
+        star.addEventListener('mouseleave', function() {
+            updateStars(currentRating);
+        });
+    });
+    
+    // Reset stars when form is submitted
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('reset', function() {
+            currentRating = 0;
+            resetStars();
+            ratingValue.value = 0;
+            if (ratingText) ratingText.textContent = '';
+        });
+    }
+}
 function updateRatingDisplay(averageRating, totalReviews, ratingCounts) {
     // Update overall rating
     const ratingNumber = document.querySelector('.overall-rating .rating-number');
@@ -1575,166 +1720,213 @@ function updateRatingDisplay(averageRating, totalReviews, ratingCounts) {
 }
 
 // Review form handling - Initialize on reviews page
-if (document.querySelector('.review-form') || document.getElementById('qrcode')) {
-    document.addEventListener('DOMContentLoaded', function() {
-        // Update rating statistics on page load
-        updateRatingStatistics();
+if (document.querySelector('.review-form')) {
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Update rating statistics
+        await updateRatingStatistics();
         
-        // Generate QR Code
-        const baseURL = window.location.origin + window.location.pathname;
-        const reviewFormURL = baseURL + '#review-form';
-        const qrcodeContainer = document.getElementById('qrcode');
-        
-        if (qrcodeContainer && typeof QRCode !== 'undefined') {
-            new QRCode(qrcodeContainer, {
-                text: reviewFormURL,
-                width: 200,
-                height: 200,
-                colorDark: "#2c3e50",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-        
-        // Auto scroll to review form when accessing via QR code
-        if (window.location.hash === '#review-form') {
-            setTimeout(() => {
-                const reviewSection = document.getElementById('review-form');
-                if (reviewSection) {
-                    reviewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // Highlight the form briefly
-                    reviewSection.style.animation = 'highlightForm 2s ease';
-                }
-            }, 500);
-        }
-
-        // Handle star rating clicks
-        const starRating = document.getElementById('starRating');
-        const ratingValue = document.getElementById('ratingValue');
-        const ratingText = document.getElementById('ratingText');
-        
-        if (starRating) {
-            const stars = starRating.querySelectorAll('i');
-            
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const rating = this.getAttribute('data-rating');
-                    ratingValue.value = rating;
-                    
-                    // Update star display
-                    stars.forEach(s => {
-                        const r = s.getAttribute('data-rating');
-                        if (r <= rating) {
-                            s.classList.remove('far');
-                            s.classList.add('fas');
-                            s.style.color = '#f39c12';
-                        } else {
-                            s.classList.remove('fas');
-                            s.classList.add('far');
-                            s.style.color = '#ddd';
-                        }
-                    });
-                    
-                    // Update rating text
-                    const texts = {
-                        '1': '⭐ Tồi',
-                        '2': '⭐⭐ Dở',
-                        '3': '⭐⭐⭐ Bình thường',
-                        '4': '⭐⭐⭐⭐ Tốt',
-                        '5': '⭐⭐⭐⭐⭐ Tuyệt vời!'
-                    };
-                    ratingText.textContent = texts[rating];
-                    ratingText.style.color = '#f39c12';
-                });
-                
-                // Hover effect
-                star.addEventListener('mouseenter', function() {
-                    const rating = this.getAttribute('data-rating');
-                    stars.forEach(s => {
-                        const r = s.getAttribute('data-rating');
-                        if (r <= rating) {
-                            s.style.transform = 'scale(1.2)';
-                            s.style.color = '#f39c12';
-                        } else {
-                            s.style.transform = 'scale(1)';
-                            s.style.color = '#ddd';
-                        }
-                    });
-                });
-            });
-            
-            starRating.addEventListener('mouseleave', function() {
-                const currentRating = ratingValue.value;
-                stars.forEach(s => {
-                    const r = s.getAttribute('data-rating');
-                    s.style.transform = 'scale(1)';
-                    if (currentRating && r <= currentRating) {
-                        s.style.color = '#f39c12';
-                    } else {
-                        s.style.color = '#ddd';
-                    }
-                });
-            });
-        }
-
-        // Handle review form submission
+        // Handle review form submission - SỬA LẠI
         const reviewForm = document.querySelector('.review-form');
         const reviewSuccess = document.getElementById('reviewSuccess');
         
-        if (reviewForm) {
-            reviewForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+// Handle review form submission - VERSION với popup
+if (reviewForm) {
+    reviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Kiểm tra rating đã chọn chưa
+        const ratingValue = parseInt(document.getElementById('ratingValue').value || '0');
+        if (ratingValue < 1) {
+            alert('Vui lòng chọn số sao đánh giá!');
+            return;
+        }
+        
+        // Kiểm tra các trường bắt buộc
+        const reviewerName = document.getElementById('reviewerName').value.trim();
+        const reviewTitle = document.getElementById('reviewTitle').value.trim();
+        const reviewContent = document.getElementById('reviewContent').value.trim();
+        
+        if (!reviewerName || !reviewTitle || !reviewContent) {
+            alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+            return;
+        }
+        
+        // Tắt nút submit để tránh double submit
+        const submitBtn = reviewForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+        submitBtn.disabled = true;
+        
+        // Get form data
+        const formData = {
+            name: reviewerName,
+            email: document.getElementById('reviewerEmail').value.trim(),
+            rating: ratingValue,
+            title: reviewTitle,
+            content: reviewContent,
+            date: new Date().toISOString(),
+            timestamp: Date.now(),
+            id: 'review_' + Date.now(),
+            images: []
+        };
+        
+        try {
+            // Upload hình ảnh nếu có
+            const files = document.getElementById('reviewImages').files;
+            if (files && files.length > 0 && window.firebaseStorage && window.firebaseModules) {
+                const sRef = window.firebaseModules.storageRef;
+                const upload = window.firebaseModules.uploadBytes;
+                const getUrl = window.firebaseModules.getDownloadURL;
                 
-                // Get form data
-                const formData = {
-                    name: document.getElementById('reviewerName').value,
-                    email: document.getElementById('reviewerEmail').value,
-                    rating: document.getElementById('ratingValue').value || 0,
-                    title: document.getElementById('reviewTitle').value,
-                    content: document.getElementById('reviewContent').value,
-                    date: new Date().toISOString(),
-                    id: Date.now()
-                };
-                
-                if (!formData.rating) {
-                    alert('Vui lòng chọn số sao!');
-                    return;
+                for (let i = 0; i < Math.min(files.length, 3); i++) {
+                    const file = files[i];
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Kích thước ảnh tối đa 5MB');
+                        continue;
+                    }
+                    const path = `reviews/${Date.now()}_${file.name}`;
+                    const ref = sRef(window.firebaseStorage, path);
+                    await upload(ref, file);
+                    const url = await getUrl(ref);
+                    formData.images.push(url);
+                }
+            }
+            
+            // Save to Firebase
+            const reviewId = await saveReviewToFirebase(formData);
+            
+            if (reviewId) {
+                // HIỂN THỊ POPUP THÔNG BÁO
+                const successPopup = document.getElementById('reviewSuccessPopup');
+                if (successPopup) {
+                    successPopup.style.display = 'flex';
+                    
+                    // Tự động đóng sau 3 giây
+                    const autoClose = setTimeout(() => {
+                        closeSuccessPopup();
+                    }, 3000);
+                    
+                    // Thêm sự kiện cho nút đóng
+                    const closeBtn = successPopup.querySelector('.close-popup-btn');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function() {
+                            clearTimeout(autoClose);
+                            closeSuccessPopup();
+                        });
+                    }
+                    
+                    // Đóng khi click ra ngoài
+                    successPopup.addEventListener('click', function(e) {
+                        if (e.target === successPopup) {
+                            clearTimeout(autoClose);
+                            closeSuccessPopup();
+                        }
+                    });
                 }
                 
-                // Save to localStorage
-                let reviews = JSON.parse(localStorage.getItem('cafeReviews') || '[]');
-                reviews.unshift(formData);
-                localStorage.setItem('cafeReviews', JSON.stringify(reviews));
-                
                 // Update rating statistics
-                updateRatingStatistics();
-                
-                // Show success message
-                reviewSuccess.style.display = 'block';
+                await updateRatingStatistics();
                 
                 // Add to reviews display
                 displayNewReview(formData);
                 
-                // Reset form after 3 seconds
-                setTimeout(() => {
-                    reviewForm.reset();
-                    document.querySelectorAll('#starRating i').forEach(s => {
-                        s.classList.remove('fas');
-                        s.classList.add('far');
-                        s.style.color = '#ddd';
-                    });
-                    document.getElementById('ratingText').textContent = '';
-                    reviewSuccess.style.display = 'none';
-                }, 3000);
+                // Reset form
+                reviewForm.reset();
+                document.querySelectorAll('#starRating i').forEach(s => {
+                    s.classList.remove('fas');
+                    s.classList.add('far');
+                    s.style.color = '#ddd';
+                });
+                document.getElementById('ratingText').textContent = '';
+                document.getElementById('ratingValue').value = '0';
+                
+            }
+        } catch (error) {
+            console.error('❌ Error submitting review:', error);
+            alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại!');
+        } finally {
+            // Khôi phục nút submit
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+        }
+    });
+}
+
+// Hàm đóng popup
+function closeSuccessPopup() {
+    const successPopup = document.getElementById('reviewSuccessPopup');
+    if (successPopup) {
+        successPopup.style.opacity = '0';
+        setTimeout(() => {
+            successPopup.style.display = 'none';
+            successPopup.style.opacity = '1';
+            
+            // Cuộn lên phần hiển thị reviews mới
+            const reviewsSection = document.getElementById('reviews');
+            if (reviewsSection) {
+                reviewsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 300);
+    }
+}
+        
+        // Load và hiển thị reviews
+        await loadAndDisplayReviews();
+    });
+}
+
+// Sửa hàm load reviews
+async function loadAndDisplayReviews() {
+    const reviews = await loadReviewsFromFirebase();
+    const reviewsGrid = document.querySelector('.reviews-grid');
+    const loadMoreBtn = document.getElementById('loadMoreReviews');
+    
+    if (!reviewsGrid) return;
+    
+    if (reviews.length === 0) {
+        reviewsGrid.innerHTML = `
+            <div class="empty-reviews">
+                <i class="fas fa-comments"></i>
+                <h3>Chưa có đánh giá nào</h3>
+                <p>Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
+            </div>
+        `;
+        if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+        return;
+    }
+    
+    // Hiển thị 6 reviews đầu tiên
+    const initialCount = 6;
+    let displayedCount = 0;
+    
+    reviews.forEach((review, index) => {
+        if (review && review.name && review.content) {
+            const card = createReviewCard(review, index);
+            if (index >= initialCount) {
+                card.style.display = 'none';
+                card.setAttribute('data-hidden', 'true');
+            } else {
+                displayedCount++;
+            }
+            reviewsGrid.appendChild(card);
+        }
+    });
+    
+    // Nút "Xem thêm"
+    if (loadMoreBtn) {
+        if (reviews.length <= initialCount) {
+            loadMoreBtn.style.display = 'none';
+        } else {
+            loadMoreBtn.style.display = 'block';
+            loadMoreBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                loadMoreReviewsHandler();
             });
         }
-        
-        // Load and display existing reviews
-        loadReviews();
-        
-        // Setup filters
-        setupFilterListeners();
-    });
+    }
+    
+    // Setup filters
+    setupFilterListeners();
 }
 
 // Filter reviews function
@@ -1794,14 +1986,15 @@ function displayNewReview(review) {
 }
 
 // Create review card HTML
-function createReviewCard(review) {
+// Tạo card review - CẬP NHẬT
+function createReviewCard(review, index) {
     const card = document.createElement('div');
     card.className = 'review-card';
     card.setAttribute('data-rating', review.rating);
-    card.setAttribute('data-index', review.id);
+    card.setAttribute('data-index', index);
     
     const stars = '⭐'.repeat(parseInt(review.rating));
-    const date = new Date(review.date).toLocaleDateString('vi-VN');
+    const date = new Date(review.createdAt || review.date).toLocaleDateString('vi-VN');
     
     card.innerHTML = `
         <div class="review-header">
@@ -1815,12 +2008,30 @@ function createReviewCard(review) {
         </div>
         <h3 class="review-title">${review.title || 'Không có tiêu đề'}</h3>
         <p class="review-content">${review.content}</p>
-        <span class="review-date">${date}</span>
+        <div class="review-footer">
+            <span class="review-date">${date}</span>
+            ${review.id ? `<small class="review-id">#${review.id.substring(0, 8)}</small>` : ''}
+        </div>
     `;
     
+    // Append images gallery if exists
+    if (review.images && Array.isArray(review.images) && review.images.length) {
+        const gallery = document.createElement('div');
+        gallery.className = 'review-images';
+        review.images.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.loading = 'lazy';
+            img.alt = review.title || 'Review image';
+            gallery.appendChild(img);
+        });
+        card.appendChild(gallery);
+    }
+
     card.style.transition = 'opacity 0.3s ease';
     return card;
 }
+
 
 // Load reviews from localStorage
 function loadReviews() {
@@ -1952,6 +2163,249 @@ function exportReviews() {
 
 console.log('📝 Review System Loaded!');
 console.log('💡 Commands: viewAllReviews(), clearAllReviews(), exportReviews()');
+
+
+// ==================== REVIEWS PAGE INITIALIZATION ====================
+function initializeReviewsPage() {
+    if (!document.querySelector('.reviews-hero')) return;
+    
+    console.log('📝 Initializing Reviews Page...');
+    
+    // Khởi tạo star rating
+    initStarRating();
+    
+    // Cập nhật thống kê rating từ Firebase
+    updateRatingStatistics();
+    
+    // Tải và hiển thị reviews từ Firebase
+    loadAndDisplayReviews();
+    
+    // Thiết lập bộ lọc
+    setTimeout(() => {
+        setupFilterListeners();
+    }, 1000);
+}
+
+// Sửa hàm loadAndDisplayReviews để tối ưu
+async function loadAndDisplayReviews() {
+    const reviewsGrid = document.querySelector('.reviews-grid');
+    const loadMoreBtn = document.getElementById('loadMoreReviews');
+    
+    if (!reviewsGrid) return;
+    
+    console.log('🔄 Loading reviews from Firebase...');
+    
+    // Hiển thị trạng thái loading
+    reviewsGrid.innerHTML = `
+        <div class="loading-reviews">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Đang tải đánh giá...</p>
+        </div>
+    `;
+    
+    try {
+        // Load reviews từ Firebase
+        const reviews = await loadReviewsFromFirebase();
+        console.log(`✅ Loaded ${reviews.length} reviews from Firebase`);
+        
+        if (reviews.length === 0) {
+            reviewsGrid.innerHTML = `
+                <div class="empty-reviews">
+                    <i class="fas fa-comments"></i>
+                    <h3>Chưa có đánh giá nào</h3>
+                    <p>Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
+                </div>
+            `;
+            if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+            return;
+        }
+        
+        // Xóa loading state
+        reviewsGrid.innerHTML = '';
+        
+        // Hiển thị 6 reviews đầu tiên
+        const initialCount = 6;
+        let displayedCount = 0;
+        
+        reviews.forEach((review, index) => {
+            if (review && review.name && review.content) {
+                const card = createReviewCard(review, index);
+                if (index >= initialCount) {
+                    card.style.display = 'none';
+                    card.setAttribute('data-hidden', 'true');
+                } else {
+                    displayedCount++;
+                }
+                reviewsGrid.appendChild(card);
+            }
+        });
+        
+        // Nút "Xem thêm"
+        if (loadMoreBtn) {
+            if (reviews.length <= initialCount) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'block';
+                loadMoreBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loadMoreReviewsHandler();
+                });
+            }
+        }
+        
+        // Setup filters
+        setupFilterListeners();
+        
+    } catch (error) {
+        console.error('❌ Error loading reviews:', error);
+        reviewsGrid.innerHTML = `
+            <div class="error-reviews">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Không thể tải đánh giá</h3>
+                <p>Vui lòng kiểm tra kết nối internet và thử lại</p>
+                <button onclick="loadAndDisplayReviews()" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Thử lại
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Thêm CSS cho loading và error states
+const reviewsCSS = document.createElement('style');
+reviewsCSS.textContent = `
+    .loading-reviews,
+    .empty-reviews,
+    .error-reviews {
+        text-align: center;
+        padding: 3rem;
+        grid-column: 1 / -1;
+    }
+    
+    .loading-reviews i {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+    
+    .empty-reviews i {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+    
+    .error-reviews i {
+        font-size: 3rem;
+        color: #ff6b6b;
+        margin-bottom: 1rem;
+    }
+    
+    .loading-reviews p,
+    .empty-reviews p,
+    .error-reviews p {
+        color: #666;
+        margin-bottom: 1rem;
+    }
+    
+    .reviews-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .review-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease;
+    }
+    
+    .review-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .review-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .reviewer-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+    
+    .reviewer-info h3 {
+        margin: 0 0 0.3rem 0;
+        font-size: 1.1rem;
+    }
+    
+    .review-rating {
+        color: #f8c120;
+        font-size: 1rem;
+    }
+    
+    .review-title {
+        font-size: 1.2rem;
+        margin: 0 0 1rem 0;
+        color: #333;
+    }
+    
+    .review-content {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    .review-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+        font-size: 0.9rem;
+        color: #888;
+    }
+    
+    .review-images {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+    
+    .review-images img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .review-images img:hover {
+        transform: scale(1.1);
+    }
+`;
+document.head.appendChild(reviewsCSS);
+
+
+
+
 
 // ==================== MENU MANAGEMENT SYSTEM ====================
 // Quản lý Menu - Chỉnh sửa, Xóa, và In
@@ -3063,6 +3517,31 @@ if (logoutBtn) {
         }
     });
 }
+async function viewAllFirebaseReviews() {
+    try {
+        const reviews = await loadReviewsFromFirebase();
+        console.log('=== TẤT CẢ ĐÁNH GIÁ TỪ FIREBASE ===');
+        console.table(reviews);
+        return reviews;
+    } catch (error) {
+        console.error('Error loading reviews:', error);
+    }
+}
 
+async function exportFirebaseReviews() {
+    const reviews = await loadReviewsFromFirebase();
+    const dataStr = JSON.stringify(reviews, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'cafe-reviews-firebase-' + new Date().toISOString().split('T')[0] + '.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+console.log('🔥 Firebase Reviews System Loaded!');
+console.log('💡 Commands: viewAllFirebaseReviews(), exportFirebaseReviews()');
 // Load user info on page load
 loadUserInfo();

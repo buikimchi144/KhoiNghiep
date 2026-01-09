@@ -138,7 +138,7 @@
             <h2 class="section-title">Đánh giá gần đây</h2>
             
             <div class="reviews-grid">
-                <!-- Đánh giá sẽ được load từ localStorage -->
+              
             </div>
 
             <div class="load-more">
@@ -156,7 +156,14 @@
                 <h2 class="section-title">Chia sẻ trải nghiệm của bạn</h2>
                 <p>Chúng tôi rất trân trọng ý kiến đóng góp của bạn<br>
                     Vui lòng liên hệ quản lý nếu có bất kỳ vấn đề nào xảy ra: 0909 123 45</p>
-                
+                   <div id="reviewSuccessPopup" class="review-success-popup" style="display: none;">
+                <div class="popup-content">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Cảm ơn bạn đã đánh giá!</h3>
+                    <p>Đánh giá của bạn đã được gửi thành công.</p>
+                    <button class="close-popup-btn">OK</button>
+                </div>
+            </div>
                 <form class="review-form" id="reviewForm">
                     <div class="form-group">
                         <label for="reviewerName">Họ tên *</label>
@@ -202,9 +209,7 @@
 
                 <!-- Thông báo thành công -->
                 <div id="reviewSuccess" class="review-success" style="display: none;">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Cảm ơn bạn đã đánh giá!</h3>
-                    <p>Đánh giá của bạn đã được gửi thành công.</p>
+
                 </div>
             </div>
         </div>
@@ -275,7 +280,70 @@
             </div>
         </div>
     </footer>
+<!-- Firebase SDK (ĐẶT TRƯỚC script.js của bạn) -->
+<!-- Thay thế phần script Firebase ở cuối file bằng: -->
+<script type="module">
+    // Import Firebase modules (app + firestore + storage + analytics)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
 
-    <script src="../js/script.js"></script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAEulAQKbcvsfH8Lz5c5r_lDuoBlBNF0lA",
+        authDomain: "khoinghiep-42d50.firebaseapp.com",
+        projectId: "khoinghiep-42d50",
+        storageBucket: "khoinghiep-42d50.firebasestorage.app",
+        messagingSenderId: "1042244041560",
+        appId: "1:1042244041560:web:5a6829c1abc10f108b432d",
+        measurementId: "G-JJMHPXZF5S"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // Make Firebase available globally for other scripts
+    window.firebaseApp = app;
+    window.firebaseDB = db;
+    window.firebaseStorage = storage;
+    window.firebaseModules = {
+        collection,
+        addDoc,
+        getDocs,
+        query,
+        orderBy,
+        serverTimestamp,
+        // storage helpers
+        storageRef,
+        uploadBytes,
+        getDownloadURL
+    };
+  
+    console.log("✅ Firebase initialized successfully!");
+  
+    // Test connection
+    setTimeout(async () => {
+        try {
+            const testRef = collection(db, "test");
+            console.log("🔗 Firebase connected!");
+        } catch (error) {
+            console.error("❌ Firebase connection error:", error);
+        }
+    }, 1000);
+    // Test 1: Kiểm tra Firebase
+console.log('Firebase DB:', window.firebaseDB);
+console.log('Firebase Modules:', window.firebaseModules);
+
+// Test 2: Xem tất cả reviews
+viewAllFirebaseReviews();
+</script>
+
+<script src="../js/script.js"></script>
+
+
 </body>
 </html>
