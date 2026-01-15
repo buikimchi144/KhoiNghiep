@@ -1498,7 +1498,7 @@ window.addEventListener('load', function() {
 });
 
 // ==================== REVIEWS SYSTEM ====================
-// Hàm lưu đánh giá lên Firebase
+
 async function saveReviewToFirebase(review) {
     try {
         const { collection, addDoc } = window.firebaseModules;
@@ -1508,20 +1508,107 @@ async function saveReviewToFirebase(review) {
         review.createdAt = new Date().toISOString();
         review.timestamp = Date.now();
         
-        // Lưu lên Firestore
-        const docRef = await addDoc(collection(db, "reviews"), review);
-        console.log("✅ Review saved to Firebase with ID:", docRef.id);
+        // XỬ LÝ ẢNH: CHUYỂN THÀNH BASE64 VÀ LƯU TRỰC TIẾP VÀO FIRESTORE
+        const files = document.getElementById('reviewImages').files;
+        if (files && files.length > 0) {
+            review.images = await convertImagesToBase64(files);
+            console.log(`✅ Đã chuyển ${review.images.length} ảnh thành Base64`);
+        } else {
+            review.images = [];
+        }
         
-        // Cũng lưu vào localStorage để cache
+        // FIRESTORE CÓ THỂ LƯU ẢNH BASE64 TRỰC TIẾP!
+        const docRef = await addDoc(collection(db, "reviews"), review);
+        console.log("✅ Review saved with images to Firestore:", docRef.id);
+        
+        // Cache vào localStorage
         saveReviewToLocalStorage(review);
         
         return docRef.id;
     } catch (error) {
-        console.error("❌ Error saving review to Firebase:", error);
-        // Fallback: lưu vào localStorage nếu Firebase lỗi
+        console.error("❌ Error saving review to Firestore:", error);
+        // Fallback
         saveReviewToLocalStorage(review);
         return null;
     }
+}
+
+// Hàm chuyển ảnh thành Base64
+async function convertImagesToBase64(files) {
+    const base64Images = [];
+    
+    for (let i = 0; i < Math.min(files.length, 3); i++) {
+        const file = files[i];
+        
+        // Kiểm tra kích thước (giới hạn 1MB cho Firestore)
+        if (file.size > 1 * 1024 * 1024) {
+            alert(`Ảnh ${file.name} quá lớn (>1MB). Vui lòng chọn ảnh nhỏ hơn.`);
+            continue;
+        }
+        
+        try {
+            const base64 = await fileToBase64(file);
+            base64Images.push({
+                data: base64,
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                uploadedAt: new Date().toISOString()
+            });
+        } catch (error) {
+            console.error(`Lỗi chuyển ảnh ${file.name}:`, error);
+        }
+    }
+    
+    return base64Images;
+}
+
+// Helper: File to Base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Hàm upload hình ảnh riêng biệt
+async function uploadReviewImages(files) {
+    const uploadedImages = [];
+    const { storageRef, uploadBytes, getDownloadURL } = window.firebaseModules;
+    
+    for (let i = 0; i < Math.min(files.length, 3); i++) {
+        const file = files[i];
+        if (file.size > 5 * 1024 * 1024) {
+            console.warn(`Ảnh ${file.name} vượt quá 5MB, bỏ qua`);
+            continue;
+        }
+        
+        try {
+            // Tạo tên file unique
+            const timestamp = Date.now();
+            const fileName = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+            const path = `reviews/${fileName}`;
+            
+            // Tạo storage reference
+            const storage = window.firebaseStorage;
+            const imageRef = storageRef(storage, path);
+            
+            // Upload file
+            await uploadBytes(imageRef, file);
+            
+            // Lấy URL
+            const downloadURL = await getDownloadURL(imageRef);
+            uploadedImages.push(downloadURL);
+            
+            console.log(`✅ Uploaded image ${i + 1}: ${downloadURL.substring(0, 50)}...`);
+        } catch (error) {
+            console.error(`❌ Error uploading image ${file.name}:`, error);
+        }
+    }
+    
+    return uploadedImages;
 }
 
 // Hàm lấy đánh giá từ Firebase
@@ -1730,6 +1817,7 @@ if (document.querySelector('.review-form')) {
         const reviewSuccess = document.getElementById('reviewSuccess');
         
 // Handle review form submission - VERSION với popup
+// Handle review form submission - VERSION với popup
 if (reviewForm) {
     reviewForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -1766,33 +1854,12 @@ if (reviewForm) {
             content: reviewContent,
             date: new Date().toISOString(),
             timestamp: Date.now(),
-            id: 'review_' + Date.now(),
-            images: []
+            id: 'review_' + Date.now()
+            // Images sẽ được thêm trong saveReviewToFirebase
         };
         
         try {
-            // Upload hình ảnh nếu có
-            const files = document.getElementById('reviewImages').files;
-            if (files && files.length > 0 && window.firebaseStorage && window.firebaseModules) {
-                const sRef = window.firebaseModules.storageRef;
-                const upload = window.firebaseModules.uploadBytes;
-                const getUrl = window.firebaseModules.getDownloadURL;
-                
-                for (let i = 0; i < Math.min(files.length, 3); i++) {
-                    const file = files[i];
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('Kích thước ảnh tối đa 5MB');
-                        continue;
-                    }
-                    const path = `reviews/${Date.now()}_${file.name}`;
-                    const ref = sRef(window.firebaseStorage, path);
-                    await upload(ref, file);
-                    const url = await getUrl(ref);
-                    formData.images.push(url);
-                }
-            }
-            
-            // Save to Firebase
+            // Save to Firebase (hàm này sẽ tự động upload ảnh)
             const reviewId = await saveReviewToFirebase(formData);
             
             if (reviewId) {
@@ -1985,8 +2052,8 @@ function displayNewReview(review) {
     setupFilterListeners();
 }
 
-// Create review card HTML
-// Tạo card review - CẬP NHẬT
+// Tạo card review - HIỂN THỊ ẢNH LỚN TRỰC TIẾP
+// Tạo card review - HIỂN THỊ ẢNH LỚN TRỰC TIẾP
 function createReviewCard(review, index) {
     const card = document.createElement('div');
     card.className = 'review-card';
@@ -1996,7 +2063,8 @@ function createReviewCard(review, index) {
     const stars = '⭐'.repeat(parseInt(review.rating));
     const date = new Date(review.createdAt || review.date).toLocaleDateString('vi-VN');
     
-    card.innerHTML = `
+    // Tạo HTML cơ bản cho card
+    let html = `
         <div class="review-header">
             <div class="reviewer-avatar">
                 ${review.name.charAt(0).toUpperCase()}
@@ -2008,30 +2076,258 @@ function createReviewCard(review, index) {
         </div>
         <h3 class="review-title">${review.title || 'Không có tiêu đề'}</h3>
         <p class="review-content">${review.content}</p>
+    `;
+    
+    // HIỂN THỊ ẢNH LỚN TRỰC TIẾP - KHÔNG CẦN CLICK
+    if (review.images && Array.isArray(review.images) && review.images.length > 0) {
+        html += '<div class="review-images-direct">';
+        
+        review.images.forEach((img, idx) => {
+            let imgSrc = '';
+            
+            if (typeof img === 'object') {
+                imgSrc = img.data || img.url || '';
+            } else if (typeof img === 'string') {
+                imgSrc = img;
+            }
+            
+            if (imgSrc) {
+                html += `
+                    <div class="review-image-item">
+                        <img src="${imgSrc}" 
+                             alt="Ảnh từ ${review.name}" 
+                             class="review-direct-image"
+                             >
+                        <div class="image-info">Ảnh ${idx + 1}</div>
+                    </div>
+                `;
+            }
+        });
+        
+        html += '</div>';
+    }
+        setTimeout(() => {
+        const reviewCard = document.querySelector(`.review-card[data-index="${index}"]`);
+        if (reviewCard) {
+            const imageContainer = reviewCard.querySelector('.review-images-direct');
+            if (imageContainer) {
+                const imageCount = imageContainer.querySelectorAll('.review-image-item').length;
+                
+                // Xóa class cũ
+                imageContainer.classList.remove('single-image', 'two-images', 'multiple-images');
+                
+                // Thêm class mới dựa trên số lượng ảnh
+                if (imageCount === 1) {
+                    imageContainer.classList.add('single-image');
+                } else if (imageCount === 2) {
+                    imageContainer.classList.add('two-images');
+                } else {
+                    imageContainer.classList.add('multiple-images');
+                }
+                
+                // Thêm badge số lượng ảnh
+                const imageItems = imageContainer.querySelectorAll('.review-image-item');
+                imageItems.forEach((item, idx) => {
+                    const badge = document.createElement('div');
+                    badge.className = 'image-count-badge';
+                    badge.textContent = idx + 1;
+                    item.appendChild(badge);
+                });
+                
+                // Thêm class has-images cho review card
+                reviewCard.classList.add('has-images');
+            }
+        }
+    }, 100);
+    // Thêm footer
+    html += `
         <div class="review-footer">
             <span class="review-date">${date}</span>
             ${review.id ? `<small class="review-id">#${review.id.substring(0, 8)}</small>` : ''}
+            ${review.images && review.images.length > 0 ? 
+                `<span class="photo-count"><i class="fas fa-camera"></i> ${review.images.length} ảnh</span>` : 
+                ''}
         </div>
     `;
     
-    // Append images gallery if exists
-    if (review.images && Array.isArray(review.images) && review.images.length) {
-        const gallery = document.createElement('div');
-        gallery.className = 'review-images';
-        review.images.forEach(url => {
-            const img = document.createElement('img');
-            img.src = url;
-            img.loading = 'lazy';
-            img.alt = review.title || 'Review image';
-            gallery.appendChild(img);
-        });
-        card.appendChild(gallery);
-    }
-
-    card.style.transition = 'opacity 0.3s ease';
+    card.innerHTML = html;
     return card;
 }
 
+// Hàm hiển thị ảnh lớn (cải tiến)
+function showImageModal(imageSrc, reviewerName = 'Khách', imageNumber = 1) {
+    // Xóa modal cũ nếu có
+    const oldModal = document.querySelector('.image-modal');
+    if (oldModal) oldModal.remove();
+    
+    const modal = document.createElement('div');
+    modal.className = 'image-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="position: relative; max-width: 90%; max-height: 90%;">
+            <div style="position: absolute; top: -60px; right: 0; display: flex; gap: 10px; align-items: center;">
+                <span style="color: white; font-size: 14px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 20px;">
+                    Ảnh ${imageNumber} từ ${reviewerName}
+                </span>
+                <button class="close-modal" style="background: none; border: none; color: white; font-size: 30px; cursor: pointer; transition: transform 0.3s ease; padding: 5px 10px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <img src="${imageSrc}" alt="Ảnh từ ${reviewerName}" 
+                 style="max-width: 100%; max-height: 90vh; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+            
+            <div style="position: absolute; bottom: -50px; left: 0; right: 0; text-align: center;">
+                <button class="download-btn" style="background: #2A6BFF; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-right: 10px;">
+                    <i class="fas fa-download"></i> Tải xuống
+                </button>
+                <button class="close-btn" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                    <i class="fas fa-times"></i> Đóng
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Thêm CSS animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .close-modal:hover {
+            transform: scale(1.2);
+        }
+        .download-btn:hover, .close-btn:hover {
+            opacity: 0.8;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Xử lý sự kiện
+    const closeModal = () => {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.remove();
+            style.remove();
+        }, 300);
+    };
+    
+    modal.querySelector('.close-modal').addEventListener('click', closeModal);
+    modal.querySelector('.close-btn').addEventListener('click', closeModal);
+    
+    // Tải ảnh
+    modal.querySelector('.download-btn').addEventListener('click', function() {
+        const link = document.createElement('a');
+        link.href = imageSrc;
+        link.download = `cafe-focus-review-${reviewerName}-${imageNumber}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    
+    // Đóng khi click ra ngoài
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Đóng bằng phím ESC
+    document.addEventListener('keydown', function closeOnEscape(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', closeOnEscape);
+        }
+    });
+}
+
+// Thêm CSS vào head
+const reviewImagesCSS = `
+    .review-images {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+        overflow-x: auto;
+        padding: 10px 0;
+    }
+    
+    .review-images img {
+        flex-shrink: 0;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .review-images img:hover {
+        transform: scale(1.05);
+        border-color: #2A6BFF;
+        box-shadow: 0 5px 15px rgba(42, 107, 255, 0.2);
+    }
+    
+    .photo-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f8f9fa;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .photo-count i {
+        color: #2A6BFF;
+    }
+`;
+
+// Thêm CSS vào head nếu chưa có
+if (!document.querySelector('#review-images-css')) {
+    const style = document.createElement('style');
+    style.id = 'review-images-css';
+    style.textContent = reviewImagesCSS;
+    document.head.appendChild(style);
+}
+
+// Hàm hiển thị ảnh lớn
+function showImageModal(imageSrc) {
+    const modal = document.createElement('div');
+    modal.className = 'image-modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <img src="${imageSrc}" alt="Ảnh xem trước">
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.querySelector('.close-modal').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+}
 
 // Load reviews from localStorage
 function loadReviews() {
@@ -3545,3 +3841,104 @@ console.log('🔥 Firebase Reviews System Loaded!');
 console.log('💡 Commands: viewAllFirebaseReviews(), exportFirebaseReviews()');
 // Load user info on page load
 loadUserInfo();
+// Debug Firebase initialization
+function checkFirebaseSetup() {
+    console.log('=== FIREBASE DEBUG ===');
+    console.log('Firebase DB available:', !!window.firebaseDB);
+    console.log('Firebase Storage available:', !!window.firebaseStorage);
+    console.log('Firebase Modules:', Object.keys(window.firebaseModules || {}));
+    
+    if (!window.firebaseDB || !window.firebaseModules) {
+        console.error('❌ Firebase chưa được khởi tạo!');
+        return false;
+    }
+    
+    const requiredModules = ['collection', 'addDoc', 'storageRef', 'uploadBytes', 'getDownloadURL'];
+    const missingModules = requiredModules.filter(mod => !window.firebaseModules[mod]);
+    
+    if (missingModules.length > 0) {
+        console.error('❌ Thiếu Firebase modules:', missingModules);
+        return false;
+    }
+    
+    console.log('✅ Firebase setup OK');
+    return true;
+}
+// Thêm vào cuối script.js
+const imageStyles = document.createElement('style');
+imageStyles.textContent = `
+    /* Base64 image styles */
+    .review-images {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        overflow-x: auto;
+        padding: 10px 0;
+    }
+    
+    .review-images img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .review-images img:hover {
+        transform: scale(1.05);
+        border-color: #2A6BFF;
+        box-shadow: 0 5px 15px rgba(42, 107, 255, 0.2);
+    }
+    
+    /* Image modal */
+    .image-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .modal-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+    }
+    
+    .modal-content img {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    
+    .close-modal {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 30px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .close-modal:hover {
+        transform: scale(1.2);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+`;
+document.head.appendChild(imageStyles);

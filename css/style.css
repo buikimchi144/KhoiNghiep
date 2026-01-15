@@ -9851,3 +9851,209 @@ body {
             font-size: 0.9rem;
         }
     }
+/* ẢNH HIỂN THỊ TRỰC TIẾP TRONG REVIEW - VERSION ĐẸP HƠN */
+.review-images-direct {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #f1f5f9 100%);
+    border-radius: 15px;
+    border: 2px solid #e9ecef;
+    justify-items: center;
+    align-items: start;
+}
+
+.review-image-item {
+    width: 100%;
+    max-width: 280px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    cursor: pointer;
+}
+
+.review-image-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 25px rgba(42, 107, 255, 0.15);
+    border: 2px solid rgba(42, 107, 255, 0.3);
+}
+
+.review-direct-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+    transition: transform 0.5s ease;
+}
+
+.review-image-item:hover .review-direct-image {
+    transform: scale(1.05);
+}
+
+.image-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.review-image-item:hover .image-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hiệu ứng overlay */
+.review-image-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(42, 107, 255, 0.1), rgba(0, 201, 167, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    border-radius: 12px;
+}
+
+.review-image-item:hover::before {
+    opacity: 1;
+}
+
+/* Animation khi load ảnh */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.review-image-item {
+    animation: fadeInScale 0.5s ease-out;
+}
+
+/* Khi có 1 ảnh duy nhất */
+.review-images-direct.single-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.review-images-direct.single-image .review-image-item {
+    max-width: 350px;
+    height: 250px;
+}
+
+/* Khi có 2 ảnh */
+.review-images-direct.two-images {
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: center;
+}
+
+/* Khi có 3 ảnh trở lên */
+.review-images-direct.multiple-images {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 250px));
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .review-images-direct {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 15px;
+    }
+    
+    .review-image-item {
+        height: 180px;
+    }
+    
+    .review-images-direct.single-image .review-image-item {
+        max-width: 280px;
+        height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-images-direct {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .review-image-item {
+        height: 200px;
+        max-width: 100%;
+    }
+    
+    .review-images-direct.single-image .review-image-item {
+        max-width: 100%;
+    }
+    
+    .review-images-direct.two-images {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Thêm hiệu ứng cho review card khi có ảnh */
+.review-card.has-images {
+    border-top: 3px solid #2A6BFF;
+}
+
+.review-card.has-images .review-images-direct {
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+/* Icon cho ảnh */
+.image-count-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(42, 107, 255, 0.9);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+/* Loading state cho ảnh */
+.review-direct-image.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

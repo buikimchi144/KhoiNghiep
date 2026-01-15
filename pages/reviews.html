@@ -199,7 +199,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="reviewImages">Hình ảnh (tối đa 3 ảnh)</label>
+                        <label for="reviewImages">Hình ảnh </label>
                         <input type="file" id="reviewImages" accept="image/*" multiple>
                         <small>Định dạng: JPG, PNG. Tối đa 5MB/ảnh</small>
                     </div>
@@ -282,12 +282,12 @@
     </footer>
 <!-- Firebase SDK (ĐẶT TRƯỚC script.js của bạn) -->
 <!-- Thay thế phần script Firebase ở cuối file bằng: -->
+<!-- SỬA LẠI PHẦN FIREBASE SCRIPT -->
 <script type="module">
-    // Import Firebase modules (app + firestore + storage + analytics)
+    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-storage.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
 
     // Firebase configuration
     const firebaseConfig = {
@@ -302,7 +302,6 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
@@ -317,29 +316,49 @@
         query,
         orderBy,
         serverTimestamp,
-        // storage helpers
         storageRef,
         uploadBytes,
         getDownloadURL
     };
   
     console.log("✅ Firebase initialized successfully!");
-  
-    // Test connection
-    setTimeout(async () => {
+    console.log("📊 Database:", db);
+    console.log("📁 Storage:", storage);
+
+    // Tạo global function để test
+    window.testFirebaseConnection = async () => {
         try {
-            const testRef = collection(db, "test");
-            console.log("🔗 Firebase connected!");
+            console.log("🧪 Testing Firebase connection...");
+            const testRef = collection(db, "reviews");
+            const querySnapshot = await getDocs(testRef);
+            console.log(`✅ Connected! Found ${querySnapshot.size} reviews`);
+            
+            // Hiển thị dữ liệu để debug
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                console.log(`📄 Review ${doc.id}:`, {
+                    name: data.name,
+                    rating: data.rating,
+                    hasImages: data.images ? data.images.length : 0,
+                    images: data.images ? data.images.map(img => 
+                        typeof img === 'object' ? `Object with data: ${img.data ? 'YES' : 'NO'}` : 'String'
+                    ) : 'No images'
+                });
+            });
+            
+            return querySnapshot;
         } catch (error) {
             console.error("❌ Firebase connection error:", error);
+            return null;
         }
-    }, 1000);
-    // Test 1: Kiểm tra Firebase
-console.log('Firebase DB:', window.firebaseDB);
-console.log('Firebase Modules:', window.firebaseModules);
+    };
 
-// Test 2: Xem tất cả reviews
-viewAllFirebaseReviews();
+    // Tự động test khi trang tải xong
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(async () => {
+            await window.testFirebaseConnection();
+        }, 1000);
+    });
 </script>
 
 <script src="../js/script.js"></script>
