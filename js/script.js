@@ -8,7 +8,7 @@
         'about.html',
         'services.html',
         'orders.html',
-        '' // trang chủ
+        '' 
     ];
     
    
